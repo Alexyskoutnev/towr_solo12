@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/alice/catkin_ws/devel_isolated/towr_ros/include/**",
+        "/home/alice/catkin_ws/devel_isolated/towr/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/alice/catkin_ws/devel_isolated/ifopt/include/**",
+        "/home/alice/catkin_ws/src/towr/towr_ros/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
