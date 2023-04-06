@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/alice/catkin_ws/devel_isolated/towr_ros/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/alice/catkin_ws/devel_isolated/towr/include/**",
+        "/home/alice/catkin_ws/devel_isolated/ifopt/include/**",
+        "/home/alice/catkin_ws/src/towr/towr_ros/include/**",
+        "/home/alice/xpp_solo12_cat/src/xpp_solo12/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
