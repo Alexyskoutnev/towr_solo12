@@ -95,11 +95,7 @@ int main(int argc, char* argv[])
       std::cout << "Default" << std::endl;
       goal[0] = 1.0;
       goal[1] = 0.0;
-<<<<<<< HEAD
-      goal[2] = 0.30;
-=======
-      goal[2] = 0.317;
->>>>>>> 954f7a5fc1bb82e4e529504d0c8ce80550cc51b4
+      goal[2] = 0.28;
   }
 
   //timetep 
@@ -124,11 +120,7 @@ int main(int argc, char* argv[])
   formulation.initial_ee_W_ = nominal_stance_B;
 
   // set the initial position of the quadruped
-<<<<<<< HEAD
-  formulation.initial_base_.lin.at(kPos).z() = 0.30;
-=======
-  formulation.initial_base_.lin.at(kPos).z() = 0.317;
->>>>>>> 954f7a5fc1bb82e4e529504d0c8ce80550cc51b4
+  formulation.initial_base_.lin.at(kPos).z() = 0.28;
   
   // define the desired goal state of the quadruped
   formulation.final_base_.lin.at(towr::kPos) << goal[0], goal[1], goal[2];
@@ -138,8 +130,8 @@ int main(int argc, char* argv[])
   // First we define the initial phase durations, that can however be changed
   // by the optimizer. The number of swing and stance phases however is fixed.
   // alternating stance and swing:     ____-----_____-----_____-----_____
-  auto gait_gen_ = GaitGenerator::MakeGaitGenerator(n_ee);
-  auto id_gait   = static_cast<GaitGenerator::Combos>(1);
+  auto gait_gen_ = GaitGenerator::MakeGaitGenerator(n_ee); //0 - overlap walk, 1 - fly trot, 2 -pace
+  auto id_gait   = static_cast<GaitGenerator::Combos>(0);
     gait_gen_->SetCombo(id_gait);
     for (int ee=0; ee<n_ee; ++ee) {
       formulation.params_.ee_phase_durations_.push_back(gait_gen_->GetPhaseDurations(run_time, ee));
@@ -165,7 +157,8 @@ int main(int argc, char* argv[])
   // solver->SetOption("derivative_test", "first-order");
   auto solver = std::make_shared<ifopt::IpoptSolver>();
   solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
-  solver->SetOption("max_cpu_time", 30.0);
+  solver->SetOption("linear_solver", "mumps");
+  solver->SetOption("max_cpu_time", 40.0);
   solver->Solve(nlp);
 
   // Can directly view the optimization variables through:
@@ -179,30 +172,30 @@ int main(int argc, char* argv[])
   cout << "\n====================\nQuadruped trajectory:\n====================\n";
 
   double t = 0.0;
-  while (t<=solution.base_linear_->GetTotalTime() + 1e-5) {
-    cout << "t=" << t << "\n";
-    cout << "Base linear position x,y,z:   \t";
-    cout << solution.base_linear_->GetPoint(t).p().transpose() << "\t[m]" << endl;
+  // while (t<=solution.base_linear_->GetTotalTime() + 1e-5) {
+  //   cout << "t=" << t << "\n";
+  //   cout << "Base linear position x,y,z:   \t";
+  //   cout << solution.base_linear_->GetPoint(t).p().transpose() << "\t[m]" << endl;
 
-    cout << "Base Euler roll, pitch, yaw:  \t";
-    Eigen::Vector3d rad = solution.base_angular_->GetPoint(t).p();
-    cout << (rad/M_PI*180).transpose() << "\t[deg]" << endl;
+  //   cout << "Base Euler roll, pitch, yaw:  \t";
+  //   Eigen::Vector3d rad = solution.base_angular_->GetPoint(t).p();
+  //   cout << (rad/M_PI*180).transpose() << "\t[deg]" << endl;
 
 
-    for (int i = 0; i < n_ee; i ++){
-       cout << "Foot position " << i << " x,y,z:          \t";
-      cout << solution.ee_motion_.at(i)->GetPoint(t).p().transpose() << "\t[m]" << endl;
+  //   for (int i = 0; i < n_ee; i ++){
+  //      cout << "Foot position " << i << " x,y,z:          \t";
+  //     cout << solution.ee_motion_.at(i)->GetPoint(t).p().transpose() << "\t[m]" << endl;
 
-      cout << "Contact force " << i << " x,y,z:          \t";
-      cout << solution.ee_force_.at(i)->GetPoint(t).p().transpose() << "\t[N]" << endl;
+  //     cout << "Contact force " << i << " x,y,z:          \t";
+  //     cout << solution.ee_force_.at(i)->GetPoint(t).p().transpose() << "\t[N]" << endl;
 
-      bool contact = solution.phase_durations_.at(i)->IsContactPhase(t);
-      std::string foot_in_contact = contact? "yes" : "no";
-      cout << "Foot " << i << " in contact:              \t" + foot_in_contact << endl;
+  //     bool contact = solution.phase_durations_.at(i)->IsContactPhase(t);
+  //     std::string foot_in_contact = contact? "yes" : "no";
+  //     cout << "Foot " << i << " in contact:              \t" + foot_in_contact << endl;
 
-    }
-    cout << endl;
-    t += 0.1;
-  }
+  //   }
+  //   cout << endl;
+  //   t += 0.1;
+  // }
   getTrajectory(solution, save_file, timestep);
 }
