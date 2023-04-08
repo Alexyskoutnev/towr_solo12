@@ -46,8 +46,11 @@ public:
   // Solo12DynamicModel() : SingleRigidBodyDynamics(2.5,
   //                     0.00578574, 0.01938108, 0.02476124, 0, 0, 0,
   //                     4) {}
-  Solo12DynamicModel() : SingleRigidBodyDynamics(2.5,
-                      0.0089, 0.024, 0.0266, 0, 0, 0,
+  // Solo12DynamicModel() : SingleRigidBodyDynamics(2.5,
+  //                     0.0089, 0.024, 0.0266, 0, 0, 0,
+  //                     4) {}
+  Solo12DynamicModel() : SingleRigidBodyDynamics(1.0,
+                      1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
                       4) {}
 };
 
