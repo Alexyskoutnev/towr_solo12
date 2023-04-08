@@ -80,6 +80,7 @@ enable_testing()
 # example problem solved with IPOPT
 add_executable(${PROJECT_NAME}-example 
   test/hopper_example.cc
+  # test/collect_traj.cc
 )
 target_link_libraries(${PROJECT_NAME}-example  
   PRIVATE

@@ -95,7 +95,11 @@ int main(int argc, char* argv[])
       std::cout << "Default" << std::endl;
       goal[0] = 1.0;
       goal[1] = 0.0;
+<<<<<<< HEAD
       goal[2] = 0.30;
+=======
+      goal[2] = 0.317;
+>>>>>>> 954f7a5fc1bb82e4e529504d0c8ce80550cc51b4
   }
 
   //timetep 
@@ -120,7 +124,11 @@ int main(int argc, char* argv[])
   formulation.initial_ee_W_ = nominal_stance_B;
 
   // set the initial position of the quadruped
+<<<<<<< HEAD
   formulation.initial_base_.lin.at(kPos).z() = 0.30;
+=======
+  formulation.initial_base_.lin.at(kPos).z() = 0.317;
+>>>>>>> 954f7a5fc1bb82e4e529504d0c8ce80550cc51b4
   
   // define the desired goal state of the quadruped
   formulation.final_base_.lin.at(towr::kPos) << goal[0], goal[1], goal[2];
