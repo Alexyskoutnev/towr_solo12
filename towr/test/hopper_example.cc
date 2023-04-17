@@ -88,27 +88,30 @@ int main(int argc, char* argv[])
   //start-end position
   if (argc > 1){
     std::cout << "Using CMD VALUES" << std::endl;
-    for (int i = 1; i < argc; i++){
+    for (int i = 1; i < argc - 1; i++){
       goal[i - 1] = std::stod(argv[i]);
     }
   } else {
       std::cout << "Default" << std::endl;
-      goal[0] = 1.0;
+      goal[0] = 0.5;
       goal[1] = 0.0;
-      goal[2] = 0.28;
   }
 
+  //start of ground
+  double z_ground = 0.0;
+
   //timetep 
-  double timestep = 0.01;
+  double _timestep = 0.01;
 
   //number of EE 
   int n_ee = 4;
 
   //trajectory run time
-  double run_time = 10.0;
+  double run_time = 5.0;
 
   // terrain
   formulation.terrain_ = std::make_shared<FlatGround>(0.0);
+  
 
   // Kinematic limits and dynamic parameters of the Quadruped
   // formulation.model_ = RobotModel(RobotModel::Biped);
@@ -120,23 +123,43 @@ int main(int argc, char* argv[])
   formulation.initial_ee_W_ = nominal_stance_B;
 
   // set the initial position of the quadruped
-  formulation.initial_base_.lin.at(kPos).z() = 0.28;
+  // formulation.initial_base_.lin.at(kPos).z() = 0.28;
+  formulation.initial_base_.lin.at(kPos).z() = - nominal_stance_B.front().z() + z_ground;
+  goal[2] = -nominal_stance_B.front().z();
+
+  std::cout << "base start pos x -> " << formulation.initial_base_.lin.at(kPos).x() << std::endl;
+  std::cout << "base start pos y -> " << formulation.initial_base_.lin.at(kPos).y() << std::endl;
+  std::cout << "base start pos z -> " << formulation.initial_base_.lin.at(kPos).z() << std::endl;
+
+  // Starting the EE position a height zero
+  for (auto ee : formulation.initial_ee_W_){
+    ee.z() = 0.0;
+    std::cout << "ee start pos x -> " << ee.x() << std::endl;
+    std::cout << "ee start pos y -> " << ee.y() << std::endl;
+    std::cout << "ee start pos z -> " << ee.z() << std::endl;
+  }
   
   // define the desired goal state of the quadruped
   formulation.final_base_.lin.at(towr::kPos) << goal[0], goal[1], goal[2];
+  // formulation.final_base_.lin.at(towr::kVel) << 0, 0, 0;
+  formulation.final_base_.ang.at(towr::kPos) << 0, 0, 0;
+  // formulation.final_base_.ang.at(towr::kVel) << 0, 0, 0;
 
   // Parameters that define the motion. See c'tor for default values or
   // other values that can be modified.
   // First we define the initial phase durations, that can however be changed
   // by the optimizer. The number of swing and stance phases however is fixed.
   // alternating stance and swing:     ____-----_____-----_____-----_____
-  auto gait_gen_ = GaitGenerator::MakeGaitGenerator(n_ee); //0 - overlap walk, 1 - fly trot, 2 -pace
+  auto gait_gen_ = GaitGenerator::MakeGaitGenerator(n_ee); //0 - overlap walk, 1 - fly trot, 2 - pace
   auto id_gait   = static_cast<GaitGenerator::Combos>(0);
     gait_gen_->SetCombo(id_gait);
     for (int ee=0; ee<n_ee; ++ee) {
       formulation.params_.ee_phase_durations_.push_back(gait_gen_->GetPhaseDurations(run_time, ee));
       formulation.params_.ee_in_contact_at_start_.push_back(gait_gen_->IsInContactAtStart(ee));
   }
+
+  // formulation.params_.constraints_.push_back(Parameters::BaseRom);
+  formulation.params_.OptimizePhaseDurations();
 
   // Initialize the nonlinear-programming problem with the variables,
   // constraints and costs.
@@ -149,16 +172,13 @@ int main(int argc, char* argv[])
   for (auto c : formulation.GetCosts())
     nlp.AddCostSet(c);
 
-  // You can add your own elements to the nlp as well, simply by calling:
-  // nlp.AddVariablesSet(your_custom_variables);
-  // nlp.AddConstraintSet(your_custom_constraints);
-
   // Choose ifopt solver (IPOPT or SNOPT), set some parameters and solve.
   // solver->SetOption("derivative_test", "first-order");
   auto solver = std::make_shared<ifopt::IpoptSolver>();
-  solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
   solver->SetOption("linear_solver", "mumps");
-  solver->SetOption("max_cpu_time", 40.0);
+  solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
+  solver->SetOption("max_cpu_time", 30.0);
+  solver->SetOption("print_level", 5);
   solver->Solve(nlp);
 
   // Can directly view the optimization variables through:
@@ -171,7 +191,7 @@ int main(int argc, char* argv[])
   cout << fixed;
   cout << "\n====================\nQuadruped trajectory:\n====================\n";
 
-  double t = 0.0;
+  // double t = 0.0;
   // while (t<=solution.base_linear_->GetTotalTime() + 1e-5) {
   //   cout << "t=" << t << "\n";
   //   cout << "Base linear position x,y,z:   \t";
@@ -197,5 +217,5 @@ int main(int argc, char* argv[])
   //   cout << endl;
   //   t += 0.1;
   // }
-  getTrajectory(solution, save_file, timestep);
+  getTrajectory(solution, save_file, _timestep);
 }
