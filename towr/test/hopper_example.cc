@@ -1,32 +1,3 @@
-/******************************************************************************
-Copyright (c) 2018, Alexander W. Winkler. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-* Neither the name of the copyright holder nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-******************************************************************************/
-
 #include <cmath>
 #include <iostream>
 #include <string>
@@ -37,13 +8,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <towr/initialization/gait_generator.h>
 #include <towr/nlp_formulation.h>
 #include <ifopt/ipopt_solver.h>
-
 #include <towr/models/endeffector_mappings.h>
 
 std::string save_file = "traj.csv";
 
 using namespace towr;
-
 
 void entry(std::ofstream& file, double joints[]){
     for (int i = 0; i < 14; i++){
@@ -53,6 +22,9 @@ void entry(std::ofstream& file, double joints[]){
 }
 
 void getTrajectory(SplineHolder& solution, std::string save_file, double timestep){
+  /*
+  Collects Towr trajectory into a csv file
+  */
   double t = 0.0;
   double T = solution.base_linear_->GetTotalTime();
   double csv[15];
@@ -67,8 +39,6 @@ void getTrajectory(SplineHolder& solution, std::string save_file, double timeste
     }
     for (int ee_towr=0; ee_towr<n_ee; ++ee_towr) {
         ee_motion  = solution.ee_motion_.at(ee_towr)->GetPoint(t).p();
-        // std::cout << "EE-POS [" << ee_towr << "] " << std::endl;
-        // std::cout << ee_motion << std::endl;
         for (int i = 0; i < 3; i++){
             csv[(ee_towr * 3) + (i + 3)] = ee_motion[i];
         }
@@ -107,25 +77,23 @@ int main(int argc, char* argv[])
   int n_ee = 4;
 
   //trajectory run time
-  double run_time = 5.0;
+  double run_time = 10.0;
 
   // terrain
   formulation.terrain_ = std::make_shared<FlatGround>(0.0);
   
 
   // Kinematic limits and dynamic parameters of the Quadruped
-  // formulation.model_ = RobotModel(RobotModel::Biped);
   formulation.model_ = RobotModel(RobotModel::Solo12);
-  // formulation.model_ = RobotModel(RobotModel::Anymal);
 
   //Set the initial EE position at t = 0
   auto nominal_stance_B = formulation.model_.kinematic_model_->GetNominalStanceInBase();
   formulation.initial_ee_W_ = nominal_stance_B;
 
   // set the initial position of the quadruped
-  // formulation.initial_base_.lin.at(kPos).z() = 0.28;
-  formulation.initial_base_.lin.at(kPos).z() = - nominal_stance_B.front().z() + z_ground;
-  goal[2] = -nominal_stance_B.front().z();
+  formulation.initial_base_.lin.at(kPos).z() = 0.21;
+  // formulation.initial_base_.lin.at(kPos).z() = - nominal_stance_B.front().z() + z_ground;
+  goal[2] = formulation.initial_base_.lin.at(kPos).z();
 
   std::cout << "base start pos x -> " << formulation.initial_base_.lin.at(kPos).x() << std::endl;
   std::cout << "base start pos y -> " << formulation.initial_base_.lin.at(kPos).y() << std::endl;
@@ -133,7 +101,7 @@ int main(int argc, char* argv[])
 
   // Starting the EE position a height zero
   for (auto ee : formulation.initial_ee_W_){
-    ee.z() = 0.0;
+    // ee.z() = 0.0;
     std::cout << "ee start pos x -> " << ee.x() << std::endl;
     std::cout << "ee start pos y -> " << ee.y() << std::endl;
     std::cout << "ee start pos z -> " << ee.z() << std::endl;
@@ -141,15 +109,12 @@ int main(int argc, char* argv[])
   
   // define the desired goal state of the quadruped
   formulation.final_base_.lin.at(towr::kPos) << goal[0], goal[1], goal[2];
-  // formulation.final_base_.lin.at(towr::kVel) << 0, 0, 0;
+  formulation.final_base_.lin.at(towr::kVel) << 0, 0, 0;
   formulation.final_base_.ang.at(towr::kPos) << 0, 0, 0;
-  // formulation.final_base_.ang.at(towr::kVel) << 0, 0, 0;
+  formulation.final_base_.ang.at(towr::kVel) << 0.5, 0, 0;
 
-  // Parameters that define the motion. See c'tor for default values or
-  // other values that can be modified.
-  // First we define the initial phase durations, that can however be changed
-  // by the optimizer. The number of swing and stance phases however is fixed.
-  // alternating stance and swing:     ____-----_____-----_____-----_____
+
+  //auto gait generation
   auto gait_gen_ = GaitGenerator::MakeGaitGenerator(n_ee); //0 - overlap walk, 1 - fly trot, 2 - pace
   auto id_gait   = static_cast<GaitGenerator::Combos>(0);
     gait_gen_->SetCombo(id_gait);
@@ -158,7 +123,7 @@ int main(int argc, char* argv[])
       formulation.params_.ee_in_contact_at_start_.push_back(gait_gen_->IsInContactAtStart(ee));
   }
 
-  // formulation.params_.constraints_.push_back(Parameters::BaseRom);
+  formulation.params_.constraints_.push_back(Parameters::BaseRom); //restricts the basemotion (adds more desicion varaibles  nd helps optumization converge)
   formulation.params_.OptimizePhaseDurations();
 
   // Initialize the nonlinear-programming problem with the variables,
@@ -180,42 +145,5 @@ int main(int argc, char* argv[])
   solver->SetOption("max_cpu_time", 30.0);
   solver->SetOption("print_level", 5);
   solver->Solve(nlp);
-
-  // Can directly view the optimization variables through:
-  // Eigen::VectorXd x = nlp.GetVariableValues()
-  // However, it's more convenient to access the splines constructed from these
-  // variables and query their values at specific times:
-  using namespace std;
-  cout.precision(2);
-  nlp.PrintCurrent(); // view variable-set, constraint violations, indices,...
-  cout << fixed;
-  cout << "\n====================\nQuadruped trajectory:\n====================\n";
-
-  // double t = 0.0;
-  // while (t<=solution.base_linear_->GetTotalTime() + 1e-5) {
-  //   cout << "t=" << t << "\n";
-  //   cout << "Base linear position x,y,z:   \t";
-  //   cout << solution.base_linear_->GetPoint(t).p().transpose() << "\t[m]" << endl;
-
-  //   cout << "Base Euler roll, pitch, yaw:  \t";
-  //   Eigen::Vector3d rad = solution.base_angular_->GetPoint(t).p();
-  //   cout << (rad/M_PI*180).transpose() << "\t[deg]" << endl;
-
-
-  //   for (int i = 0; i < n_ee; i ++){
-  //      cout << "Foot position " << i << " x,y,z:          \t";
-  //     cout << solution.ee_motion_.at(i)->GetPoint(t).p().transpose() << "\t[m]" << endl;
-
-  //     cout << "Contact force " << i << " x,y,z:          \t";
-  //     cout << solution.ee_force_.at(i)->GetPoint(t).p().transpose() << "\t[N]" << endl;
-
-  //     bool contact = solution.phase_durations_.at(i)->IsContactPhase(t);
-  //     std::string foot_in_contact = contact? "yes" : "no";
-  //     cout << "Foot " << i << " in contact:              \t" + foot_in_contact << endl;
-
-  //   }
-  //   cout << endl;
-  //   t += 0.1;
-  // }
   getTrajectory(solution, save_file, _timestep);
 }
