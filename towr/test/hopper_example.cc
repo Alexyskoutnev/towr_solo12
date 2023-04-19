@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
   int n_ee = 4;
 
   //trajectory run time
-  double run_time = 10.0;
+  double run_time = 5.0;
 
   // terrain
   formulation.terrain_ = std::make_shared<FlatGround>(0.0);
