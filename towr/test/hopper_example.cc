@@ -145,5 +145,9 @@ int main(int argc, char* argv[])
   solver->SetOption("max_cpu_time", 30.0);
   solver->SetOption("print_level", 5);
   solver->Solve(nlp);
+  using namespace std;
+  cout.precision(2);
+  nlp.PrintCurrent(); // view variable-set, constraint violations, indices,...
+  cout << fixed;
   getTrajectory(solution, save_file, _timestep);
 }
