@@ -16,7 +16,7 @@ public:
   {
     const double x_nominal_b = 0.20;
     const double y_nominal_b = 0.10;
-    const double z_nominal_b = -0.2866;
+    const double z_nominal_b = -0.2166;
     // const double z_nominal_b = 0.0;
 
     nominal_stance_.at(LF) <<  x_nominal_b,   y_nominal_b, z_nominal_b;
