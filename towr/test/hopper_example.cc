@@ -77,7 +77,8 @@ int main(int argc, char* argv[])
   int n_ee = 4;
 
   //trajectory run time
-  double run_time = 5.0;
+  double run_time = goal[0] * 10;
+  // double run_time = 5.0;
 
   // terrain
   formulation.terrain_ = std::make_shared<FlatGround>(0.0);
@@ -90,9 +91,12 @@ int main(int argc, char* argv[])
   auto nominal_stance_B = formulation.model_.kinematic_model_->GetNominalStanceInBase();
   formulation.initial_ee_W_ = nominal_stance_B;
 
+  std::for_each(formulation.initial_ee_W_.begin(), formulation.initial_ee_W_.end(),
+                  [&](Eigen::Vector3d& p){ p.z() = z_ground; } // feet at 0 height
+  );
+
   // set the initial position of the quadruped
-  formulation.initial_base_.lin.at(kPos).z() = 0.21;
-  // formulation.initial_base_.lin.at(kPos).z() = - nominal_stance_B.front().z() + z_ground;
+  formulation.initial_base_.lin.at(kPos).z() = -nominal_stance_B.front().z() + z_ground;
   goal[2] = formulation.initial_base_.lin.at(kPos).z();
 
   std::cout << "base start pos x -> " << formulation.initial_base_.lin.at(kPos).x() << std::endl;
@@ -124,7 +128,7 @@ int main(int argc, char* argv[])
   }
 
   formulation.params_.constraints_.push_back(Parameters::BaseRom); //restricts the basemotion (adds more desicion varaibles  nd helps optumization converge)
-  formulation.params_.OptimizePhaseDurations();
+  // formulation.params_.OptimizePhaseDurations();
 
   // Initialize the nonlinear-programming problem with the variables,
   // constraints and costs.
@@ -142,8 +146,9 @@ int main(int argc, char* argv[])
   auto solver = std::make_shared<ifopt::IpoptSolver>();
   solver->SetOption("linear_solver", "mumps");
   solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
-  solver->SetOption("max_cpu_time", 30.0);
+  solver->SetOption("max_cpu_time", 60.0);
   solver->SetOption("print_level", 5);
+  solver->SetOption("max_iter", 3000);
   solver->Solve(nlp);
   using namespace std;
   cout.precision(2);
