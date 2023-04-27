@@ -27,20 +27,22 @@ void getTrajectory(SplineHolder& solution, std::string save_file, double timeste
   */
   double t = 0.0;
   double T = solution.base_linear_->GetTotalTime();
-  double csv[15];
+  double csv[18];
   std::ofstream file;
   file.open(save_file);
   Eigen::VectorXd base_lin, base_ang, base_ang_vel, base_ang_acc, ee_contact, ee_motion, ee_forces;
   while (t <= T + 1e-4){
     int n_ee = solution.ee_motion_.size();
     base_lin = solution.base_linear_->GetPoint(t).p();
+    base_ang = solution.base_angular_->GetPoint(t).p();
     for (int i = 0; i < 3; i++){
         csv[i] = base_lin[i];
+        csv[i+3] = base_ang[i];
     }
     for (int ee_towr=0; ee_towr<n_ee; ++ee_towr) {
         ee_motion  = solution.ee_motion_.at(ee_towr)->GetPoint(t).p();
         for (int i = 0; i < 3; i++){
-            csv[(ee_towr * 3) + (i + 3)] = ee_motion[i];
+            csv[(ee_towr * 3) + (i + 6)] = ee_motion[i];
         }
     }
     entry(file, csv);
