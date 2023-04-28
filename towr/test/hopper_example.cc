@@ -15,10 +15,10 @@ std::string save_file = "traj.csv";
 using namespace towr;
 
 void entry(std::ofstream& file, double joints[]){
-    for (int i = 0; i < 14; i++){
+    for (int i = 0; i < 17; i++){
       file << joints[i] << ",";
     }
-    file << joints[15] << "\n";
+    file << joints[18] << "\n";
 }
 
 void getTrajectory(SplineHolder& solution, std::string save_file, double timestep){
