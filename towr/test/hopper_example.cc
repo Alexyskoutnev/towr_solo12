@@ -197,7 +197,8 @@ int main(int argc, char* argv[])
   int n_ee = 4;
 
   //trajectory run time
-  double run_time = std::abs(goal[0]) * 10;
+  // double run_time = std::abs(goal[0]) * 10;
+  double run_time = 10;
   // double run_time = 5.0;
 
   // terrain
