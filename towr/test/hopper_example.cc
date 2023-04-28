@@ -3,6 +3,8 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
+#include <stdexcept>
 
 #include <towr/terrain/examples/height_map_examples.h>
 #include <towr/initialization/gait_generator.h>
@@ -13,6 +15,36 @@
 std::string save_file = "traj.csv";
 
 using namespace towr;
+
+std::string n_split_tokens(char** begin, int cnt){
+  std::string input = "";
+  int i = 0;
+  while (*begin && i < cnt){
+      std::cout << *begin << std::endl;
+      if (i == 0)
+        input += *begin;
+      else {
+        input += " ";
+        input += *begin;
+      }
+      begin++;
+      i++;
+  }
+  return input;
+}
+
+std::string getcmdParser(char** begin, char** end, const std::string & option, int arg_cnt){
+  char** itr = std::find(begin, end, option);
+  int cnt = 3;
+  if (itr != end && ++itr != end){
+    return n_split_tokens(itr, cnt);
+  }
+  return 0;
+}
+
+bool cmdoptionExists(char** begin, char** end, const std::string& option){
+  return std::find(begin, end, option);
+}
 
 void entry(std::ofstream& file, double joints[]){
     for (int i = 0; i < 17; i++){
@@ -57,17 +89,47 @@ int main(int argc, char* argv[])
   NlpFormulation formulation;
   double goal[3];
   double start[3];
-  //start-end position
-  if (argc > 1){
-    std::cout << "Using CMD VALUES" << std::endl;
-    for (int i = 1; i < argc - 1; i++){
-      goal[i - 1] = std::stod(argv[i]);
+
+  try {
+  if (cmdoptionExists(argv, argv+argc, "-g"))
+    {
+      std::string cmd_return = getcmdParser(argv, argv+argc, "-g", 3);
+      // goal[0] = std::stod(cmd_return[0]);
+      // goal[1] = std::stod(cmd_return[1]);
+      // goal[2] = std::stod(cmd_return[2]);
     }
-  } else {
-      std::cout << "Default" << std::endl;
+  else
+    {
       goal[0] = 0.5;
       goal[1] = 0.0;
+      goal[2] = 0.21;
+    }
   }
+  catch (const std::invalid_argument& e){
+    std::cerr << "Argument input error" << std::endl;
+    std::cerr << "Error: " << e.what() << std::endl;
+  }
+
+  //start-end position
+  // if (argc > 1){
+  //   std::cout << "Using CMD VALUES" << std::endl;
+  //   for (int i = 1; i < argc - 1; i++){
+  //     if (i > 0 && i < 4): //Recording start COM
+  //     {
+  //         start[i - 1] = std::stod(argv[i]);
+  //     } else if (i > 3 && i < 6){
+  //         goal[i - 1] = std::stod(argv[i + 1]);
+  //     }
+  //   }
+  // } else {
+  //     std::cout << "Default" << std::endl;
+  //     start[0] = 0.0;
+  //     start[1] = 0.0;
+  //     start[2] = 0.21;
+      // goal[0] = 0.5;
+      // goal[1] = 0.0;
+      // goal[2] = 0.21;
+  // }
 
   //start of ground
   double z_ground = 0.0;
@@ -79,7 +141,7 @@ int main(int argc, char* argv[])
   int n_ee = 4;
 
   //trajectory run time
-  double run_time = goal[0] * 10;
+  double run_time = std::abs(goal[0]) * 10;
   // double run_time = 5.0;
 
   // terrain
@@ -113,6 +175,11 @@ int main(int argc, char* argv[])
     std::cout << "ee start pos z -> " << ee.z() << std::endl;
   }
   
+
+  //define the start location of quadruped
+  formulation.initial_base_.lin.at(kPos).x() = start[0];
+  formulation.initial_base_.lin.at(kPos).y() = start[1];
+
   // define the desired goal state of the quadruped
   formulation.final_base_.lin.at(towr::kPos) << goal[0], goal[1], goal[2];
   formulation.final_base_.lin.at(towr::kVel) << 0, 0, 0;
