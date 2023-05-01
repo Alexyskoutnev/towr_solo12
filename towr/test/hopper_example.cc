@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
   double start_ang[3];
   double start_orn_vel[3];
   double goal_vel[3];
-  bool _normailze;
+  bool _normalize;
   double ee1_pos[3];
   double ee2_pos[3];
   double ee3_pos[3];
@@ -185,9 +185,9 @@ int main(int argc, char* argv[])
         std::cout << "cmd return " << cmd_return << std::endl;
         if (cmd_return == "t"){
           
-          _normailze = true;
+          _normalize = true;
         } else {
-          _normailze = false;
+          _normalize = false;
         }
       }
     else
@@ -278,6 +278,7 @@ int main(int argc, char* argv[])
     ee4_pos[0] = -0.09;
     ee4_pos[1] = -0.07;
     ee4_pos[2] = 0.0;
+    _normalize = true;
   }
 
   //end-effector vector
@@ -335,13 +336,13 @@ int main(int argc, char* argv[])
   }
 
   //Normalize the start and end coords
-  if (_normailze){
-    // std::cout << "start" << start << std::endl;
-    // std::cout << "start vals " << start[0] << ", " << start[1] << ", " << start[2] << std::endl;
-    // std::cout << "goal vals " << goal[0] << ", " << goal[1] << ", " << goal[2] << std::endl;
+  if (_normalize){
+    std::cout << "start" << start << std::endl;
+    std::cout << "start vals " << start[0] << ", " << start[1] << ", " << start[2] << std::endl;
+    std::cout << "goal vals " << goal[0] << ", " << goal[1] << ", " << goal[2] << std::endl;
     normalize(start, goal);
-    // std::cout << "start vals " << start[0] << ", " << start[1] << ", " << start[2] << std::endl;
-    // std::cout << "goal vals " << goal[0] << ", " << goal[1] << ", " << goal[2] << std::endl;
+    std::cout << "start vals " << start[0] << ", " << start[1] << ", " << start[2] << std::endl;
+    std::cout << "goal vals " << goal[0] << ", " << goal[1] << ", " << goal[2] << std::endl;
   }
 
   //define the start conditions for quadruped
