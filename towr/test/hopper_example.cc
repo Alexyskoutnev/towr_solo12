@@ -16,6 +16,15 @@ std::string save_file = "traj.csv";
 
 using namespace towr;
 
+void normalize(double vec0[], double vec1[]){
+    vec1[0] = vec1[0] - vec0[0];
+    vec1[1] = vec1[1] - vec0[1];
+    vec1[2] = vec1[2] - vec0[2];
+    vec0[0] = 0.0;
+    vec0[1] = 0.0;
+    vec0[2] = 0.21;
+}
+
 std::vector<std::string> split(const std::string& str, char delimiter) {
     std::vector<std::string> substrings;
     size_t start = 0;
@@ -111,6 +120,7 @@ int main(int argc, char* argv[])
   double start_ang[3];
   double start_orn_vel[3];
   double goal_vel[3];
+  bool _normailze;
 
 
   if (argc > 1){
@@ -160,6 +170,23 @@ int main(int argc, char* argv[])
         start_vel[0] = std::stod(cmd_return[0]);
         start_vel[1] = std::stod(cmd_return[1]);
         start_vel[2] = std::stod(cmd_return[2]);
+      }
+    else
+      {
+        start_vel[0] = 0.0;
+        start_vel[1] = 0.0;
+        start_vel[2] = 0.0;
+      }
+    if (cmdoptionExists(argv, argv+argc, "-n"))
+      {
+        std::string cmd_return = getcmdParser(argv, argv+argc, "-n", 1);
+        std::cout << "cmd return " << cmd_return << std::endl;
+        if (cmd_return == "t"){
+          
+          _normailze = true;
+        } else {
+          _normailze = false;
+        }
       }
     else
       {
@@ -230,7 +257,16 @@ int main(int argc, char* argv[])
     std::cout << "ee start pos y -> " << ee.y() << std::endl;
     std::cout << "ee start pos z -> " << ee.z() << std::endl;
   }
-  
+
+  //Normalize the start and end coords
+  if (_normailze){
+    // std::cout << "start" << start << std::endl;
+    // std::cout << "start vals " << start[0] << ", " << start[1] << ", " << start[2] << std::endl;
+    // std::cout << "goal vals " << goal[0] << ", " << goal[1] << ", " << goal[2] << std::endl;
+    normalize(start, goal);
+    // std::cout << "start vals " << start[0] << ", " << start[1] << ", " << start[2] << std::endl;
+    // std::cout << "goal vals " << goal[0] << ", " << goal[1] << ", " << goal[2] << std::endl;
+  }
 
   //define the start conditions for quadruped
   formulation.initial_base_.lin.at(towr::kPos).x() = start[0];
