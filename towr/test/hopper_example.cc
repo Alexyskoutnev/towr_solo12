@@ -320,9 +320,7 @@ int main(int argc, char* argv[])
 
   // set the initial position of the quadruped
   formulation.initial_base_.lin.at(kPos).z() = -nominal_stance_B.front().z() + z_ground;
-  std::cout << "goal " << goal[2];
   goal[2] = formulation.initial_base_.lin.at(kPos).z();
-  std::cout << "goal " << goal[2];
   // start[2] = formulation.initial_base_.lin.at(kPos).z();
 
  
@@ -357,12 +355,10 @@ int main(int argc, char* argv[])
   formulation.initial_base_.ang.at(towr::kPos).z() = start_ang[2];
 
   // define the desired goal state of the quadruped
-   std::cout << "goal 3" << goal[2];
   formulation.final_base_.lin.at(towr::kPos) << goal[0], goal[1], goal[2];
   formulation.final_base_.lin.at(towr::kVel) << 0, 0, 0;
   formulation.final_base_.ang.at(towr::kPos) << 0, 0, 0;
   formulation.final_base_.ang.at(towr::kVel) << 0, 0, 0;
-   std::cout << "goal 5" << goal[2];
 
   std::cout << "base start pos x -> " << formulation.initial_base_.lin.at(kPos).x() << std::endl;
   std::cout << "base start pos y -> " << formulation.initial_base_.lin.at(kPos).y() << std::endl;
