@@ -121,6 +121,10 @@ int main(int argc, char* argv[])
   double start_orn_vel[3];
   double goal_vel[3];
   bool _normailze;
+  double ee1_pos[3];
+  double ee2_pos[3];
+  double ee3_pos[3];
+  double ee4_pos[3];
 
 
   if (argc > 1){
@@ -194,6 +198,58 @@ int main(int argc, char* argv[])
         start_vel[1] = 0.0;
         start_vel[2] = 0.0;
       }
+    if (cmdoptionExists(argv, argv+argc, "-e1"))
+      {
+        std::vector<std::string> cmd_return = split(getcmdParser(argv, argv+argc, "-e1", 3), ' ');
+        ee1_pos[0] = std::stod(cmd_return[0]);
+        ee1_pos[1] = std::stod(cmd_return[1]);
+        ee1_pos[2] = std::stod(cmd_return[2]);
+      }
+    else
+      {
+        ee1_pos[0] = 0.09;
+        ee1_pos[1] = 0.07;
+        ee1_pos[2] = 0.0;
+      }
+    if (cmdoptionExists(argv, argv+argc, "-e2"))
+      {
+        std::vector<std::string> cmd_return = split(getcmdParser(argv, argv+argc, "-e2", 3), ' ');
+        ee2_pos[0] = std::stod(cmd_return[0]);
+        ee2_pos[1] = std::stod(cmd_return[1]);
+        ee2_pos[2] = std::stod(cmd_return[2]);
+      }
+    else
+      {
+        ee2_pos[0] = 0.09;
+        ee2_pos[1] = -0.07;
+        ee2_pos[2] = 0.0;
+      }
+    if (cmdoptionExists(argv, argv+argc, "-e3"))
+       {
+        std::vector<std::string> cmd_return = split(getcmdParser(argv, argv+argc, "-e3", 3), ' ');
+        ee3_pos[0] = std::stod(cmd_return[0]);
+        ee3_pos[1] = std::stod(cmd_return[1]);
+        ee3_pos[2] = std::stod(cmd_return[2]);
+      }
+    else
+      {
+        ee3_pos[0] = -0.09;
+        ee3_pos[1] = 0.07;
+        ee3_pos[2] = 0.0;
+      }
+    if (cmdoptionExists(argv, argv+argc, "-e4"))
+      {
+        std::vector<std::string> cmd_return = split(getcmdParser(argv, argv+argc, "-e4", 3), ' ');
+        ee4_pos[0] = std::stod(cmd_return[0]);
+        ee4_pos[1] = std::stod(cmd_return[1]);
+        ee4_pos[2] = std::stod(cmd_return[2]);
+      }
+    else
+      {
+        ee4_pos[0] = -0.09;
+        ee4_pos[1] = -0.07;
+        ee4_pos[2] = 0.0;
+      }
     }
     catch (const std::invalid_argument& e){
       std::cerr << "Argument input error" << std::endl;
@@ -212,7 +268,22 @@ int main(int argc, char* argv[])
     goal[0] = 0.5;
     goal[1] = 0.0;
     goal[2] = 0.21;
+    ee1_pos[0] = 0.09;
+    ee1_pos[1] = 0.07;
+    ee1_pos[2] = 0.0;
+    ee2_pos[0] = 0.09;
+    ee2_pos[1] = -0.07;
+    ee2_pos[2] = 0.0;
+    ee3_pos[0] = -0.09;
+    ee3_pos[1] = 0.07;
+    ee3_pos[2] = 0.0;
+    ee4_pos[0] = -0.09;
+    ee4_pos[1] = -0.07;
+    ee4_pos[2] = 0.0;
   }
+
+  //end-effector vector
+  std::vector<double*> EE = {ee1_pos, ee2_pos, ee3_pos, ee4_pos};
 
   //start of ground
   double z_ground = 0.0;
@@ -239,8 +310,13 @@ int main(int argc, char* argv[])
   auto nominal_stance_B = formulation.model_.kinematic_model_->GetNominalStanceInBase();
   formulation.initial_ee_W_ = nominal_stance_B;
 
-  std::for_each(formulation.initial_ee_W_.begin(), formulation.initial_ee_W_.end(),
-                  [&](Eigen::Vector3d& p){ p.z() = z_ground; } // feet at 0 height
+  int i = 0;
+  std::for_each(formulation.initial_ee_W_.begin(), formulation.initial_ee_W_.end(), [&](Eigen::Vector3d& p){ 
+                  p.z() = z_ground; 
+                  p.x() = EE[i][0];
+                  p.y() = EE[i][1];      
+                  i++;        
+                  } // feet at 0 height
   );
 
   // set the initial position of the quadruped
