@@ -408,9 +408,9 @@ int main(int argc, char* argv[])
   auto solver = std::make_shared<ifopt::IpoptSolver>();
   solver->SetOption("linear_solver", "mumps");
   solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
-  solver->SetOption("max_cpu_time", 60.0);
+  solver->SetOption("max_cpu_time", 10.0);
   solver->SetOption("print_level", 5);
-  solver->SetOption("max_iter", 500);
+  solver->SetOption("max_iter", 100);
   solver->Solve(nlp);
   using namespace std;
   cout.precision(2);
