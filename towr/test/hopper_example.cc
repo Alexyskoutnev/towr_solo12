@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
       {
         goal[0] = 0.5;
         goal[1] = 0.0;
-        goal[2] = 0.21;
+        goal[2] = 0.24;
       }
     if (cmdoptionExists(argv, argv+argc, "-s"))
       {
@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
       {
         start[0] = 0.0;
         start[1] = 0.0;
-        start[2] = 0.21;
+        start[2] = 0.24;
       }
     if (cmdoptionExists(argv, argv+argc, "-s_ang"))
       {
@@ -270,7 +270,7 @@ int main(int argc, char* argv[])
   } else {
     start[0] = 0.0;
     start[1] = 0.0;
-    start[2] = 0.21;
+    start[2] = 0.24;
     start_vel[0] = 0.0;
     start_vel[1] = 0.0;
     start_vel[2] = 0.0;
@@ -279,7 +279,7 @@ int main(int argc, char* argv[])
     start_ang[2] = 0.0;
     goal[0] = 0.5;
     goal[1] = 0.0;
-    goal[2] = 0.21;
+    goal[2] = 0.24;
     ee1_pos[0] = EE_default[0][0];
     ee1_pos[1] = EE_default[0][1];
     ee1_pos[2] = 0.0;
@@ -408,9 +408,9 @@ int main(int argc, char* argv[])
   auto solver = std::make_shared<ifopt::IpoptSolver>();
   solver->SetOption("linear_solver", "mumps");
   solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
-  solver->SetOption("max_cpu_time", 30.0);
+  solver->SetOption("max_cpu_time", 60.0);
   solver->SetOption("print_level", 5);
-  solver->SetOption("max_iter", 100);
+  solver->SetOption("max_iter", 500);
   solver->Solve(nlp);
   using namespace std;
   cout.precision(2);
