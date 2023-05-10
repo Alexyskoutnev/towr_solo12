@@ -123,6 +123,20 @@ int main(int argc, char* argv[])
   double ee2_pos[3];
   double ee3_pos[3];
   double ee4_pos[3];
+  std::vector<Eigen::Matrix<double, 3, 1>> EE_default;
+
+  // Kinematic limits and dynamic parameters of the Quadruped
+  formulation.model_ = RobotModel(RobotModel::Solo12);
+
+  //Set the initial EE position at t = 0
+  auto nominal_stance_B = formulation.model_.kinematic_model_->GetNominalStanceInBase();
+  formulation.initial_ee_W_ = nominal_stance_B;
+  EE_default = nominal_stance_B;
+  //Setting Default
+  for (int i = 0; i < 4; i++){
+
+  }
+
 
 
   if (argc > 1){
@@ -205,8 +219,8 @@ int main(int argc, char* argv[])
       }
     else
       {
-        ee1_pos[0] = 0.09;
-        ee1_pos[1] = 0.07;
+        ee1_pos[0] = EE_default[0][0];
+        ee1_pos[1] = EE_default[0][1];
         ee1_pos[2] = 0.0;
       }
     if (cmdoptionExists(argv, argv+argc, "-e2"))
@@ -218,8 +232,8 @@ int main(int argc, char* argv[])
       }
     else
       {
-        ee2_pos[0] = 0.09;
-        ee2_pos[1] = -0.07;
+        ee2_pos[0] = EE_default[1][0];
+        ee2_pos[1] = EE_default[1][1];
         ee2_pos[2] = 0.0;
       }
     if (cmdoptionExists(argv, argv+argc, "-e3"))
@@ -231,8 +245,8 @@ int main(int argc, char* argv[])
       }
     else
       {
-        ee3_pos[0] = -0.09;
-        ee3_pos[1] = 0.07;
+        ee3_pos[0] = EE_default[2][0];
+        ee3_pos[1] = EE_default[2][1];
         ee3_pos[2] = 0.0;
       }
     if (cmdoptionExists(argv, argv+argc, "-e4"))
@@ -244,8 +258,8 @@ int main(int argc, char* argv[])
       }
     else
       {
-        ee4_pos[0] = -0.09;
-        ee4_pos[1] = -0.07;
+        ee4_pos[0] = EE_default[3][0];
+        ee4_pos[1] = EE_default[3][1];
         ee4_pos[2] = 0.0;
       }
     }
@@ -266,17 +280,17 @@ int main(int argc, char* argv[])
     goal[0] = 0.5;
     goal[1] = 0.0;
     goal[2] = 0.21;
-    ee1_pos[0] = 0.09;
-    ee1_pos[1] = 0.07;
+    ee1_pos[0] = EE_default[0][0];
+    ee1_pos[1] = EE_default[0][1];
     ee1_pos[2] = 0.0;
-    ee2_pos[0] = 0.09;
-    ee2_pos[1] = -0.07;
+    ee2_pos[0] = EE_default[1][0];
+    ee2_pos[1] = EE_default[1][1];
     ee2_pos[2] = 0.0;
-    ee3_pos[0] = -0.09;
-    ee3_pos[1] = 0.07;
+    ee3_pos[0] = EE_default[2][0];
+    ee3_pos[1] = EE_default[2][1];
     ee3_pos[2] = 0.0;
-    ee4_pos[0] = -0.09;
-    ee4_pos[1] = -0.07;
+    ee4_pos[0] = EE_default[3][0];
+    ee4_pos[1] = EE_default[3][1];
     ee4_pos[2] = 0.0;
     _normalize = true;
   }
@@ -300,14 +314,6 @@ int main(int argc, char* argv[])
 
   // terrain
   formulation.terrain_ = std::make_shared<FlatGround>(0.0);
-  
-
-  // Kinematic limits and dynamic parameters of the Quadruped
-  formulation.model_ = RobotModel(RobotModel::Solo12);
-
-  //Set the initial EE position at t = 0
-  auto nominal_stance_B = formulation.model_.kinematic_model_->GetNominalStanceInBase();
-  formulation.initial_ee_W_ = nominal_stance_B;
 
   int i = 0;
   std::for_each(formulation.initial_ee_W_.begin(), formulation.initial_ee_W_.end(), [&](Eigen::Vector3d& p){ 
@@ -404,7 +410,7 @@ int main(int argc, char* argv[])
   solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
   solver->SetOption("max_cpu_time", 30.0);
   solver->SetOption("print_level", 5);
-  solver->SetOption("max_iter", 250);
+  solver->SetOption("max_iter", 100);
   solver->Solve(nlp);
   using namespace std;
   cout.precision(2);
