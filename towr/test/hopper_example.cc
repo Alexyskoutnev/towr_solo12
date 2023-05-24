@@ -72,19 +72,19 @@ bool cmdoptionExists(char** begin, char** end, const std::string& option){
 }
 
 void entry(std::ofstream& file, double joints[]){
-    for (int i = 0; i < 17; i++){
+    for (int i = 0; i < 18; i++){
       file << joints[i] << ",";
     }
-    file << joints[18] << "\n";
+    file << joints[19] << "\n";
 }
 
-void getTrajectory(SplineHolder& solution, std::string save_file, double timestep){
+void getTrajectory(SplineHolder& solution, std::string save_file, double timestep, double t_start){
   /*
   Collects Towr trajectory into a csv file
   */
-  double t = 0.0;
+  double t;
   double T = solution.base_linear_->GetTotalTime();
-  double csv[18];
+  double csv[19];
   std::ofstream file;
   file.open(save_file);
   Eigen::VectorXd base_lin, base_ang, base_ang_vel, base_ang_acc, ee_contact, ee_motion, ee_forces;
@@ -92,14 +92,15 @@ void getTrajectory(SplineHolder& solution, std::string save_file, double timeste
     int n_ee = solution.ee_motion_.size();
     base_lin = solution.base_linear_->GetPoint(t).p();
     base_ang = solution.base_angular_->GetPoint(t).p();
+    csv[0] = t + t_start;
     for (int i = 0; i < 3; i++){
-        csv[i] = base_lin[i];
-        csv[i+3] = base_ang[i];
+        csv[i + 1] = base_lin[i];
+        csv[i + 4] = base_ang[i];
     }
     for (int ee_towr=0; ee_towr<n_ee; ++ee_towr) {
         ee_motion  = solution.ee_motion_.at(ee_towr)->GetPoint(t).p();
         for (int i = 0; i < 3; i++){
-            csv[(ee_towr * 3) + (i + 6)] = ee_motion[i];
+            csv[(ee_towr * 3) + (i + 7)] = ee_motion[i];
         }
     }
     entry(file, csv);
@@ -123,6 +124,7 @@ int main(int argc, char* argv[])
   double ee2_pos[3];
   double ee3_pos[3];
   double ee4_pos[3];
+  double t_start;
   std::vector<Eigen::Matrix<double, 3, 1>> EE_default;
 
   // Kinematic limits and dynamic parameters of the Quadruped
@@ -132,12 +134,6 @@ int main(int argc, char* argv[])
   auto nominal_stance_B = formulation.model_.kinematic_model_->GetNominalStanceInBase();
   formulation.initial_ee_W_ = nominal_stance_B;
   EE_default = nominal_stance_B;
-  //Setting Default
-  for (int i = 0; i < 4; i++){
-
-  }
-
-
 
   if (argc > 1){
     try {
@@ -196,7 +192,6 @@ int main(int argc, char* argv[])
     if (cmdoptionExists(argv, argv+argc, "-n"))
       {
         std::string cmd_return = getcmdParser(argv, argv+argc, "-n", 1);
-        std::cout << "cmd return " << cmd_return << std::endl;
         if (cmd_return == "t"){
           
           _normalize = true;
@@ -262,12 +257,22 @@ int main(int argc, char* argv[])
         ee4_pos[1] = EE_default[3][1];
         ee4_pos[2] = 0.0;
       }
+    if (cmdoptionExists(argv, argv+argc, "-t"))
+      {
+        std::string cmd_return = getcmdParser(argv, argv+argc, "-t", 1);
+        t_start = std::stod(cmd_return);
+      }
+    else
+      {
+        t_start = 0.0;
+      }
     }
     catch (const std::invalid_argument& e){
       std::cerr << "Argument input error" << std::endl;
       std::cerr << "Error: " << e.what() << std::endl;
     }
   } else {
+    t_start = 0.0;
     start[0] = 0.0;
     start[1] = 0.0;
     start[2] = 0.24;
@@ -310,7 +315,6 @@ int main(int argc, char* argv[])
   //trajectory run time
   // double run_time = std::abs(goal[0]) * 10;
   double run_time = 10;
-  // double run_time = 5.0;
 
   // terrain
   formulation.terrain_ = std::make_shared<FlatGround>(0.0);
@@ -341,12 +345,7 @@ int main(int argc, char* argv[])
 
   //Normalize the start and end coords
   if (_normalize){
-    std::cout << "start" << start << std::endl;
-    std::cout << "start vals " << start[0] << ", " << start[1] << ", " << start[2] << std::endl;
-    std::cout << "goal vals " << goal[0] << ", " << goal[1] << ", " << goal[2] << std::endl;
     normalize(start, goal);
-    std::cout << "start vals " << start[0] << ", " << start[1] << ", " << start[2] << std::endl;
-    std::cout << "goal vals " << goal[0] << ", " << goal[1] << ", " << goal[2] << std::endl;
   }
 
   //define the start conditions for quadruped
@@ -416,5 +415,5 @@ int main(int argc, char* argv[])
   cout.precision(2);
   nlp.PrintCurrent(); // view variable-set, constraint violations, indices,...
   cout << fixed;
-  getTrajectory(solution, save_file, _timestep);
+  getTrajectory(solution, save_file, _timestep, t_start);
 }
