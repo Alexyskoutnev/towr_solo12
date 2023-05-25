@@ -27,6 +27,7 @@ public:
 
     // max_dev_from_nominal_ << 0.10, 0.10, 0.10;
     max_dev_from_nominal_ << 0.15, 0.10, 0.07;
+    // max_dev_from_nominal_ << 0.15, 0.15, 0.10;
   }
 };
 

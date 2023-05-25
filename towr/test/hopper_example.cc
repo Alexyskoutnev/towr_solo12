@@ -75,7 +75,7 @@ void entry(std::ofstream& file, double joints[]){
     for (int i = 0; i < 18; i++){
       file << joints[i] << ",";
     }
-    file << joints[19] << "\n";
+    file << joints[18] << "\n";
 }
 
 void getTrajectory(SplineHolder& solution, std::string save_file, double timestep, double t_start){
@@ -394,7 +394,7 @@ int main(int argc, char* argv[])
       formulation.params_.ee_in_contact_at_start_.push_back(gait_gen_->IsInContactAtStart(ee));
   }
 
-  formulation.params_.constraints_.push_back(Parameters::BaseRom); //restricts the basemotion (adds more desicion varaibles  nd helps optumization converge)
+  // formulation.params_.constraints_.push_back(Parameters::BaseRom); //restricts the basemotion (adds more desicion varaibles  nd helps optumization converge)
 
   // Initialize the nonlinear-programming problem with the variables,
   // constraints and costs.
