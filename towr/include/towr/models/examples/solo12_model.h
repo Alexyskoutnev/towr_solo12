@@ -26,7 +26,7 @@ public:
     nominal_stance_.at(RH) << -x_nominal_b,  -y_nominal_b, z_nominal_b;
 
     // max_dev_from_nominal_ << 0.10, 0.10, 0.10;
-    max_dev_from_nominal_ << 0.15, 0.15, 0.08;
+    max_dev_from_nominal_ << 0.15, 0.10, 0.07;
   }
 };
 
@@ -35,7 +35,7 @@ public:
  */
 class Solo12DynamicModel : public SingleRigidBodyDynamics {
 public:
-  Solo12DynamicModel() : SingleRigidBodyDynamics(2.5,
+  Solo12DynamicModel() : SingleRigidBodyDynamics(1.5,
                        0.0089, 0.024, 0.0266, 0, 0, 0,
                        4) {}
 };
