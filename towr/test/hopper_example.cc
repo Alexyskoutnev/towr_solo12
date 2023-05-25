@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
   double start_ang[3];
   double start_orn_vel[3];
   double goal_vel[3];
-  bool _normalize;
+  bool _normalize = false;
   double ee1_pos[3];
   double ee2_pos[3];
   double ee3_pos[3];
@@ -189,22 +189,23 @@ int main(int argc, char* argv[])
         start_vel[1] = 0.0;
         start_vel[2] = 0.0;
       }
-    if (cmdoptionExists(argv, argv+argc, "-n"))
-      {
-        std::string cmd_return = getcmdParser(argv, argv+argc, "-n", 1);
-        if (cmd_return == "t"){
-          
-          _normalize = true;
-        } else {
-          _normalize = false;
-        }
-      }
-    else
-      {
-        start_vel[0] = 0.0;
-        start_vel[1] = 0.0;
-        start_vel[2] = 0.0;
-      }
+    // if (cmdoptionExists(argv, argv+argc, "-n"))
+    //   {
+    //     std::string cmd_return = getcmdParser(argv, argv+argc, "-n", 1);
+    //     std::cout << "value fo cmd_return -> " << cmd_return << std::endl;
+    //     std::cout << "next line" << std::endl;
+    //     if (cmd_return == "t"){
+    //       _normalize = true;
+    //     } else {
+    //       _normalize = false;
+    //     }
+    //   }
+    // else
+    //   {
+    //     start_vel[0] = 0.0;
+    //     start_vel[1] = 0.0;
+    //     start_vel[2] = 0.0;
+    //   }
     if (cmdoptionExists(argv, argv+argc, "-e1"))
       {
         std::vector<std::string> cmd_return = split(getcmdParser(argv, argv+argc, "-e1", 3), ' ');
@@ -297,7 +298,7 @@ int main(int argc, char* argv[])
     ee4_pos[0] = EE_default[3][0];
     ee4_pos[1] = EE_default[3][1];
     ee4_pos[2] = 0.0;
-    _normalize = true;
+    _normalize = false;
   }
 
   //end-effector vector
@@ -321,9 +322,12 @@ int main(int argc, char* argv[])
 
   int i = 0;
   std::for_each(formulation.initial_ee_W_.begin(), formulation.initial_ee_W_.end(), [&](Eigen::Vector3d& p){ 
-                  p.z() = z_ground; 
+                  // p.z() = z_ground; 
+                  // p.z() = EE[i][3];
                   p.x() = EE[i][0];
-                  p.y() = EE[i][1];      
+                  p.y() = EE[i][1]; 
+                  // p.z() = z_ground;  
+                  p.z() = EE[i][2];     
                   i++;        
                   } // feet at 0 height
   );
@@ -365,6 +369,7 @@ int main(int argc, char* argv[])
   formulation.final_base_.ang.at(towr::kPos) << 0, 0, 0;
   formulation.final_base_.ang.at(towr::kVel) << 0, 0, 0;
 
+  std::cout << "normalize state-end -> " << _normalize << std::endl;
   std::cout << "base start pos x -> " << formulation.initial_base_.lin.at(kPos).x() << std::endl;
   std::cout << "base start pos y -> " << formulation.initial_base_.lin.at(kPos).y() << std::endl;
   std::cout << "base start pos z -> " << formulation.initial_base_.lin.at(kPos).z() << std::endl;
@@ -407,9 +412,9 @@ int main(int argc, char* argv[])
   auto solver = std::make_shared<ifopt::IpoptSolver>();
   solver->SetOption("linear_solver", "mumps");
   solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
-  solver->SetOption("max_cpu_time", 10.0);
+  solver->SetOption("max_cpu_time", 20);
   solver->SetOption("print_level", 5);
-  solver->SetOption("max_iter", 100);
+  solver->SetOption("max_iter", 50);
   solver->Solve(nlp);
   using namespace std;
   cout.precision(2);
