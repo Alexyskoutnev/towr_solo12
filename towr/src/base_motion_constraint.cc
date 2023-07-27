@@ -42,7 +42,7 @@ BaseMotionConstraint::BaseMotionConstraint (double T, double dt,
   base_linear_  = spline_holder.base_linear_;
   base_angular_ = spline_holder.base_angular_;
 
-  double dev_rad = 0.05;
+  double dev_rad = 0.001;
   node_bounds_.resize(k6D);
   node_bounds_.at(AX) = Bounds(-dev_rad, dev_rad);
   node_bounds_.at(AY) = Bounds(-dev_rad, dev_rad);
