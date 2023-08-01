@@ -49,6 +49,7 @@ add_library(${PROJECT_NAME} SHARED
   src/biped_gait_generator.cc
   src/quadruped_gait_generator.cc
   # terrain
+  src/custom_terrain.cpp
   src/height_map_examples.cc
   src/height_map.cc
   # helpers

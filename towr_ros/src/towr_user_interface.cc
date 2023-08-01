@@ -68,9 +68,9 @@ TowrUserInterface::TowrUserInterface ()
   goal_geom_.ang.p_ << 0.0, 0.0, 0.0; // roll, pitch, yaw angle applied Z->Y'->X''
 
   robot_      = RobotModel::Solo12;
-  terrain_    = HeightMap::FlatID;
+  terrain_    = HeightMap::CustomID;
   gait_combo_ = GaitGenerator::C0;
-  total_duration_ = 5; // default: 2.4
+  total_duration_ = 2.4; // default: 2.4
   visualize_trajectory_ = false;
   plot_trajectory_ = false;
   replay_speed_ = 1.0; // realtime

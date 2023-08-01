@@ -9,7 +9,7 @@ Panels:
         - /CartesianVisualization1/Namespaces1
         - /Solo121
       Splitter Ratio: 0.4424239993095398
-    Tree Height: 749
+    Tree Height: 779
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -32,16 +32,20 @@ Panels:
     Name: Time
     SyncMode: 0
     SyncSource: ""
+Preferences:
+  PromptSaveOnExit: false
+Toolbars:
+  toolButtonStyle: 2
 Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.5
-      Cell Size: 0.1
+      Cell Size: 0.10000000149011612
       Class: rviz/Grid
       Color: 160; 160; 164
       Enabled: false
       Line Style:
-        Line Width: 0.03
+        Line Width: 0.029999999329447746
         Value: Lines
       Name: Grid
       Normal Cell Count: 0
@@ -58,20 +62,20 @@ Visualization Manager:
       Marker Topic: /xpp/terrain
       Name: Terrain (approximated)
       Namespaces:
-        terrain: true
+        {}
       Queue Size: 100
       Value: true
     - Alpha: 1
-      Axes Length: 0.1
-      Axes Radius: 0.01
+      Axes Length: 0.10000000149011612
+      Axes Radius: 0.009999999776482582
       Class: rviz/Pose
       Color: 255; 25; 0
       Enabled: true
-      Head Length: 0.1
-      Head Radius: 0.05
+      Head Length: 0.10000000149011612
+      Head Radius: 0.05000000074505806
       Name: Desired Goal
-      Shaft Length: 0.3
-      Shaft Radius: 0.02
+      Shaft Length: 0.30000001192092896
+      Shaft Radius: 0.019999999552965164
       Shape: Axes
       Topic: /xpp/goal
       Unreliable: false
@@ -81,15 +85,7 @@ Visualization Manager:
       Marker Topic: /xpp/rviz_markers
       Name: CartesianVisualization
       Namespaces:
-        base_pose: true
-        cop: true
-        ee_force: true
-        endeffector_pos: true
-        friction_cone: true
-        gravity_force: false
-        inverted_pendulum: false
-        range_of_motion: true
-        support_polygons: true
+        {}
       Queue Size: 100
       Value: true
     - Alpha: 0.5
@@ -159,17 +155,18 @@ Visualization Manager:
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
-      Enabled: true
+      Enabled: false
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: true
         Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
       Name: Solo12
       Robot Description: /solo12_rviz_urdf_robot_description
       TF Prefix: solo12
       Update Interval: 0
-      Value: true
+      Value: false
       Visual Enabled: true
   Enabled: true
   Global Options:
@@ -205,7 +202,6 @@ Visualization Manager:
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
-      Field of View: 0.7853981852531433
       Focal Point:
         X: 0.8147569894790649
         Y: -0.12352100014686584
@@ -217,6 +213,7 @@ Visualization Manager:
       Near Clip Distance: 0.009999999776482582
       Pitch: 0.28979799151420593
       Target Frame: <Fixed Frame>
+      Value: ThirdPersonFollower (rviz)
       Yaw: 1.3389899730682373
     Saved:
       - Angle: 3.140000104904175
@@ -231,6 +228,7 @@ Visualization Manager:
         Near Clip Distance: 0.009999999776482582
         Scale: 582.8400268554688
         Target Frame: <Fixed Frame>
+        Value: TopDownOrtho (rviz)
         X: 0.16045600175857544
         Y: 0.09311659634113312
       - Angle: 6.260000228881836
@@ -245,6 +243,7 @@ Visualization Manager:
         Near Clip Distance: 0.009999999776482582
         Scale: 266.7760009765625
         Target Frame: <Fixed Frame>
+        Value: TopDownOrtho (rviz)
         X: 2.279409885406494
         Y: -0.7245129942893982
       - Class: rviz/Orbit
@@ -254,7 +253,6 @@ Visualization Manager:
           Stereo Focal Distance: 1
           Swap Stereo Eyes: false
           Value: false
-        Field of View: 0.7853981852531433
         Focal Point:
           X: 4.226150035858154
           Y: -1.1256200075149536
@@ -266,6 +264,7 @@ Visualization Manager:
         Near Clip Distance: 0.009999999776482582
         Pitch: 0.434798002243042
         Target Frame: <Fixed Frame>
+        Value: Orbit (rviz)
         Yaw: 5.150000095367432
       - Class: rviz/Orbit
         Distance: 1.7256799936294556
@@ -274,7 +273,6 @@ Visualization Manager:
           Stereo Focal Distance: 1
           Swap Stereo Eyes: false
           Value: false
-        Field of View: 0.7853981852531433
         Focal Point:
           X: 0.09568200260400772
           Y: -0.16040100157260895
@@ -286,6 +284,7 @@ Visualization Manager:
         Near Clip Distance: 0.009999999776482582
         Pitch: 0.3497979938983917
         Target Frame: base_link
+        Value: Orbit (rviz)
         Yaw: 5.114999771118164
 Window Geometry:
   Displays:
@@ -293,7 +292,7 @@ Window Geometry:
   Height: 1009
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001b300000389fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006e00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000004700000389000000f100fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000012f00000432fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000004300000432000000c200fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000003bf0000003efc0100000002fb0000000800540069006d00650000000000000003bf000005bd00fffffffb0000000800540069006d006501000000000000045000000000000000000000057e0000038900000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001b30000039bfc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003b0000039b000000c700fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000012f00000432fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000004300000432000000a000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000003bf0000003efc0100000002fb0000000800540069006d00650000000000000003bf0000042700fffffffb0000000800540069006d006501000000000000045000000000000000000000057f0000039b00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -303,5 +302,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1848
-  X: 72
-  Y: 34
+  X: 2587
+  Y: 147

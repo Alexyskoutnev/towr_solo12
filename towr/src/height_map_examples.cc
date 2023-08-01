@@ -31,12 +31,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace towr {
 
-
+// FLAT
 FlatGround::FlatGround(double height)
 {
   height_ = height;
 }
 
+// BLOCK
 double
 Block::GetHeight (double x, double y) const
 {
