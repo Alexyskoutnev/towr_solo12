@@ -1,3 +1,4 @@
+#include "towr/terrain/custom_terrain.hpp"
 #include <cmath>
 #include <iostream>
 #include <string>
@@ -112,6 +113,7 @@ void getTrajectory(SplineHolder& solution, std::string save_file, double timeste
 
 int main(int argc, char* argv[])
 {
+  CustomTerrain terrain;
   NlpFormulation formulation;
   double goal[3];
   double start[3];
@@ -318,7 +320,7 @@ int main(int argc, char* argv[])
   double run_time = 10;
 
   // terrain
-  formulation.terrain_ = std::make_shared<FlatGround>(0.0);
+  formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfield.txt");
 
   int i = 0;
   std::for_each(formulation.initial_ee_W_.begin(), formulation.initial_ee_W_.end(), [&](Eigen::Vector3d& p){ 

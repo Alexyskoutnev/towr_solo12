@@ -4,7 +4,6 @@ project(towr VERSION 1.3.2)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 find_package(ifopt 2.0.1 REQUIRED)
 
-
 ###########
 ## Build ##
 ###########

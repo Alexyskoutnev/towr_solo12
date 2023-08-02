@@ -24,7 +24,7 @@ UNAME=$(uname)
 
 mkdir $PROJECT_PATH/build
 pushdq $PROJECT_PATH/build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=1
 make
 
 echo "$0 done."

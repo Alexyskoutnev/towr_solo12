@@ -12,17 +12,17 @@
 		{
 			"label": "Install ifopt",
 			"type": "shell",
-			"group": "build",
 			"dependsOn": [
                 "Configure ifopt"
             ],
 			"command": "../../ifopt/scripts/install.sh",
+			//"group": "build",
 		},
 		{
 			"label": "Uninstall ifopt",
 			"type": "shell",
 			"command": "../../ifopt/scripts/install.sh",
-			"group": "build",
+			//"group": "build",
 		},
 		{
 			"label": "Build with cmake",
