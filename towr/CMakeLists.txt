@@ -73,6 +73,21 @@ target_include_directories(${PROJECT_NAME}
     $<INSTALL_INTERFACE:include>
 )
 
+##########################
+## Trajectory generator ##
+##########################
+add_executable(
+  main
+  src/main.cpp			
+)
+target_link_libraries(main
+  PRIVATE
+    ${PROJECT_NAME} 
+    ifopt::ifopt_ipopt
+)
+target_compile_options(
+  main PRIVATE
+)
 
 #############
 ## Testing ##
@@ -81,7 +96,6 @@ enable_testing()
 # example problem solved with IPOPT
 add_executable(${PROJECT_NAME}-example 
   test/hopper_example.cc
-  # test/collect_traj.cc
 )
 target_link_libraries(${PROJECT_NAME}-example  
   PRIVATE
