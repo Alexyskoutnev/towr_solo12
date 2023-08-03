@@ -1,0 +1,40 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build towr",
+			"type": "shell",
+			"command": "bash ./scripts/build_towr.sh",
+			"group": "build",
+		},
+		{
+			"label": "Catkin build towr & rviz",
+			"type": "shell",
+			"command": "bash ./scripts/catkin_build.sh",
+			"group": "build",
+		},
+		{
+			"label": "Launch rviz",
+			"type": "shell",
+			"command": "bash ./scripts/launch_rviz.sh",
+			"group": "build",
+		},
+		{
+			"label": "Install ifopt",
+			"type": "shell",
+			"dependsOn": [
+				"Configure ifopt"
+			],
+			"command": "sudo bash ./scripts/install_ifopt.sh",
+			//"group": "build",
+		},
+		{
+			"label": "Uninstall ifopt",
+			"type": "shell",
+			"command": "sudo bash ./scripts/uninstall_ifopt.sh",
+			//"group": "build",
+		}
+	]
+}

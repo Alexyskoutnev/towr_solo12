@@ -4,30 +4,24 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "Configure ifopt",
-			"type": "shell",
-			"command": "../../ifopt/scripts/configure.sh",
-			//"group": "build",
-		},
-		{
 			"label": "Install ifopt",
 			"type": "shell",
 			"dependsOn": [
                 "Configure ifopt"
             ],
-			"command": "../../ifopt/scripts/install.sh",
-			//"group": "build",
+			"command": "sudo bash ./scripts/install_ifopt.sh",
+			"group": "build",
 		},
 		{
 			"label": "Uninstall ifopt",
 			"type": "shell",
-			"command": "../../ifopt/scripts/install.sh",
-			//"group": "build",
+			"command": "sudo bash ./scripts/uninstall_ifopt.sh",
+			"group": "build",
 		},
 		{
 			"label": "Build with cmake",
 			"type": "shell",
-			"command": "./scripts/build.sh",
+			"command": "bash ./scripts/build.sh",
 			"group": "build",
 		}
 	]

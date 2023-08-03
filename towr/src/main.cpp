@@ -113,7 +113,6 @@ void getTrajectory(SplineHolder& solution, std::string save_file, double timeste
 
 int main(int argc, char* argv[])
 {
-  CustomTerrain terrain;
   NlpFormulation formulation;
   double goal[3];
   double start[3];
