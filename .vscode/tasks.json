@@ -1,15 +1,27 @@
 {
 	"tasks": [
 		{
-			"label": "Build towr",
+			"label": "Build towr with cmake",
 			"type": "shell",
-			"command": "bash ./scripts/build_towr.sh",
+			"command": "bash ./scripts/cmake_build/build.sh",
+			"group": "build",
+		},
+		{
+			"label": "Clear cmake build",
+			"type": "shell",
+			"command": "bash ./scripts/cmake_build/clear.sh",
 			"group": "build",
 		},
 		{
 			"label": "Catkin build towr & rviz",
 			"type": "shell",
-			"command": "bash ./scripts/catkin_build.sh",
+			"command": "bash ./scripts/catkin_build/build.sh",
+			"group": "build",
+		},
+		{
+			"label": "Clear catkin build",
+			"type": "shell",
+			"command": "bash ./scripts/catkin_build/clear.sh",
 			"group": "build",
 		},
 		{

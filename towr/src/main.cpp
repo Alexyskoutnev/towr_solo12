@@ -315,19 +315,15 @@ int main(int argc, char* argv[])
   int n_ee = 4;
 
   //trajectory run time
-  // double run_time = std::abs(goal[0]) * 10;
-  double run_time = 10;
+  double run_time = 1;
 
   // terrain
   formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfield.txt");
 
   int i = 0;
   std::for_each(formulation.initial_ee_W_.begin(), formulation.initial_ee_W_.end(), [&](Eigen::Vector3d& p){ 
-                  // p.z() = z_ground; 
-                  // p.z() = EE[i][3];
                   p.x() = EE[i][0];
                   p.y() = EE[i][1]; 
-                  // p.z() = z_ground;  
                   p.z() = EE[i][2];     
                   i++;        
                   } // feet at 0 height
@@ -336,13 +332,9 @@ int main(int argc, char* argv[])
   // set the initial position of the quadruped
   formulation.initial_base_.lin.at(kPos).z() = -nominal_stance_B.front().z() + z_ground;
   goal[2] = formulation.initial_base_.lin.at(kPos).z();
-  // start[2] = formulation.initial_base_.lin.at(kPos).z();
-
- 
 
   // Starting the EE position a height zero
   for (auto ee : formulation.initial_ee_W_){
-    // ee.z() = 0.0;
     std::cout << "ee start pos x -> " << ee.x() << std::endl;
     std::cout << "ee start pos y -> " << ee.y() << std::endl;
     std::cout << "ee start pos z -> " << ee.z() << std::endl;
@@ -380,23 +372,25 @@ int main(int argc, char* argv[])
   std::cout << "base start ang x -> " << formulation.initial_base_.ang.at(kPos).x() << std::endl;
   std::cout << "base start ang y -> " << formulation.initial_base_.ang.at(kPos).y() << std::endl;
   std::cout << "base start ang z -> " << formulation.initial_base_.ang.at(kPos).z() << std::endl;
-
   std::cout << "base end pos x -> " << formulation.final_base_.lin.at(kPos).x() << std::endl;
   std::cout << "base end pos y -> " << formulation.final_base_.lin.at(kPos).y() << std::endl;
   std::cout << "base end pos z -> " << formulation.final_base_.lin.at(kPos).z() << std::endl;
 
-
   //auto gait generation
   auto gait_gen_ = GaitGenerator::MakeGaitGenerator(n_ee); //0 - overlap walk, 1 - fly trot, 2 - pace
-  auto id_gait   = static_cast<GaitGenerator::Combos>(0);
-    gait_gen_->SetCombo(id_gait);
-    for (int ee=0; ee<n_ee; ++ee) {
-      formulation.params_.ee_phase_durations_.push_back(gait_gen_->GetPhaseDurations(run_time, ee));
-      formulation.params_.ee_in_contact_at_start_.push_back(gait_gen_->IsInContactAtStart(ee));
+  auto gait_type = GaitGenerator::Custom;
+  gait_gen_->SetCombo(gait_type);
+
+  for (int ee=0; ee<n_ee; ++ee) {
+    //formulation.params_.ee_phase_durations_.push_back(gait_gen_->GetPhaseDurations(run_time, ee));
+    formulation.params_.ee_in_contact_at_start_.push_back(gait_gen_->IsInContactAtStart(ee));
   }
+  formulation.params_.ee_phase_durations_.push_back({.25, .5, .25});
+  formulation.params_.ee_phase_durations_.push_back({1.0});
+  formulation.params_.ee_phase_durations_.push_back({1.0});
+  formulation.params_.ee_phase_durations_.push_back({1.0});
 
-  // formulation.params_.constraints_.push_back(Parameters::BaseRom); //restricts the basemotion (adds more desicion varaibles  nd helps optumization converge)
-
+  // formulation.params_.constraints_.push_back(Parameters::BaseRom); //restricts the basemotion (adds more decision varaibles and helps optumization converge)
   // Initialize the nonlinear-programming problem with the variables,
   // constraints and costs.
   ifopt::Problem nlp;
@@ -417,6 +411,7 @@ int main(int argc, char* argv[])
   solver->SetOption("print_level", 5);
   solver->SetOption("max_iter", 300);
   solver->Solve(nlp);
+
   using namespace std;
   cout.precision(2);
   nlp.PrintCurrent(); // view variable-set, constraint violations, indices,...

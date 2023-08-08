@@ -12,7 +12,7 @@ trap popdq EXIT
 pushdq "$(dirname ${BASH_SOURCE[0]:-$0})"
 
 #* catkin project's relative path with respect to this script
-CATKIN_PATH=../../..
+CATKIN_PATH=../../../..
 
 pushdq $CATKIN_PATH
 catkin_make_isolated -DCMAKE_BUILD_TYPE=Release # or `catkin build`

@@ -15,7 +15,7 @@ class CustomTerrain : public HeightMap
 {
   public:
 	// figure out how to pass the file using roslaunch???
-	CustomTerrain(const std::string &file_name = "/home/cinaral/git_ws/solo12_towr_ws/src/"
+	CustomTerrain(const std::string &file_name = "/home/cinaral/catkin_ws/solo12_towr/src/"
 	                                             "towr_solo12/towr/data/heightfield.txt");
 	HeightField ReadHeightField(const std::string &file_name);
 	double GetHeight(double x, double y) const override;
