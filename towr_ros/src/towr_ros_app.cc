@@ -74,6 +74,12 @@ public:
       params.ee_phase_durations_.push_back(gait_gen_->GetPhaseDurations(msg.total_duration, ee));
       params.ee_in_contact_at_start_.push_back(gait_gen_->IsInContactAtStart(ee));
     }
+    //params.ee_phase_durations_.push_back({0.25, 1.0, 3.75});
+    //params.ee_phase_durations_.push_back({1.25, 1.0, 2.75});
+    //params.ee_phase_durations_.push_back({2.25, 1.0, 1.75});
+    //params.ee_phase_durations_.push_back({3.25, 1.0, .75});
+    //params.ee_phase_durations_.push_back({5.0});
+    //params.ee_phase_durations_.opush_back({5.0});
 
     // Here you can also add other constraints or change parameters
     params.constraints_.push_back(Parameters::BaseRom);
@@ -107,7 +113,7 @@ public:
     // deviation of 10e-4, which is fine. What to watch out for is deviations > 10e-2.
     // solver_->SetOption("derivative_test", "first-order");
 
-    solver_->SetOption("max_cpu_time", 60.0);
+    solver_->SetOption("max_cpu_time", 10.0);
     solver_->SetOption("print_level", 5);
 
     if (msg.play_initialization)

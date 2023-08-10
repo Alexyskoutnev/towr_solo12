@@ -308,7 +308,7 @@ main(int argc, char *argv[])
 	int n_ee = 4;
 
 	// trajectory run time
-	double run_time = 1;
+	double run_time = 5;
 
 	// terrain
 	formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfield.txt");
@@ -356,19 +356,18 @@ main(int argc, char *argv[])
 	// auto gait generation
 	auto gait_gen_ =
 	    GaitGenerator::MakeGaitGenerator(n_ee); // 0 - overlap walk, 1 - fly trot, 2 - pace
-	auto gait_type = GaitGenerator::C0;
+	auto gait_type = GaitGenerator::Custom;
 	gait_gen_->SetCombo(gait_type);
 
 	for (int ee = 0; ee < n_ee; ++ee) {
-		// formulation.params_.ee_phase_durations_.push_back(gait_gen_->GetPhaseDurations(run_time,
-		// ee));
+		 formulation.params_.ee_phase_durations_.push_back(gait_gen_->GetPhaseDurations(run_time, ee));
 		formulation.params_.ee_in_contact_at_start_.push_back(
 		    gait_gen_->IsInContactAtStart(ee));
 	}
-	formulation.params_.ee_phase_durations_.push_back({.25, .5, .25});
-	formulation.params_.ee_phase_durations_.push_back({1.0});
-	formulation.params_.ee_phase_durations_.push_back({1.0});
-	formulation.params_.ee_phase_durations_.push_back({1.0});
+	//formulation.params_.ee_phase_durations_.push_back({.25, .5, .25});
+	//formulation.params_.ee_phase_durations_.push_back({1.0});
+	//formulation.params_.ee_phase_durations_.push_back({1.0});
+	//formulation.params_.ee_phase_durations_.push_back({1.0});
 
 	// formulation.params_.constraints_.push_back(Parameters::BaseRom); //restricts the
 	// basemotion (adds more decision varaibles and helps optumization converge) Initialize the
@@ -387,7 +386,7 @@ main(int argc, char *argv[])
 	auto solver = std::make_shared<ifopt::IpoptSolver>();
 	solver->SetOption("linear_solver", "mumps");
 	solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
-	solver->SetOption("max_cpu_time", 60.0);
+	solver->SetOption("max_cpu_time", 10.0);
 	solver->SetOption("print_level", 5);
 	solver->SetOption("max_iter", 3000);
 	solver->Solve(nlp);
