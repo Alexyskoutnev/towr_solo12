@@ -133,7 +133,7 @@ public:
   double GetFrictionCoeff() const { return friction_coeff_; };
 
 protected:
-  double friction_coeff_ = 2.0;
+  double friction_coeff_ = 1.0;
 
 private:
   using DimDerivs = std::vector<Dim2D>; ///< dimensional derivatives

@@ -26,6 +26,10 @@ public:
     const double y_nominal_b = 0.18;
     const double z_nominal_b = -0.24;
 
+    // const double x_nominal_b = 0.20;
+    // const double y_nominal_b = 0.18;
+    // const double z_nominal_b = -0.24;
+
     nominal_stance_.at(LF) <<  x_nominal_b,   y_nominal_b, z_nominal_b;
     nominal_stance_.at(RF) <<  x_nominal_b,  -y_nominal_b, z_nominal_b;
     nominal_stance_.at(LH) << -x_nominal_b,   y_nominal_b, z_nominal_b;
@@ -33,7 +37,7 @@ public:
 
     // max_dev_from_nominal_ << 0.10, 0.10, 0.10;
     // max_dev_from_nominal_ << 0.10, 0.10, 0.05;
-    max_dev_from_nominal_ << 0.10, 0.08, 0.075;
+    max_dev_from_nominal_ << 0.08, 0.05, 0.075;
     // max_dev_from_nominal_ << 0.15, 0.15, 0.10;
   }
 };
@@ -43,8 +47,8 @@ public:
  */
 class Solo12DynamicModel : public SingleRigidBodyDynamics {
 public:
-  Solo12DynamicModel() : SingleRigidBodyDynamics(0.5,
-                       0.0212708, 0.0447083, 0.0609375, 0.0, 0.0, 0.0,
+  Solo12DynamicModel() : SingleRigidBodyDynamics(1.25123725,
+                       0.00266220, -0.00003684, -0.00001716, 0.01388510, -0.00000009, 0.01605370,
                        4) {}
 };
 
