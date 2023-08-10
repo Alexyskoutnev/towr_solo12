@@ -1,0 +1,28 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Install ifopt",
+			"type": "shell",
+			"dependsOn": [
+                "Configure ifopt"
+            ],
+			"command": "sudo bash ./scripts/install_ifopt.sh",
+			"group": "build",
+		},
+		{
+			"label": "Uninstall ifopt",
+			"type": "shell",
+			"command": "sudo bash ./scripts/uninstall_ifopt.sh",
+			"group": "build",
+		},
+		{
+			"label": "Build with cmake",
+			"type": "shell",
+			"command": "bash ./scripts/build.sh",
+			"group": "build",
+		}
+	]
+}

@@ -42,7 +42,9 @@ BaseMotionConstraint::BaseMotionConstraint (double T, double dt,
   base_linear_  = spline_holder.base_linear_;
   base_angular_ = spline_holder.base_angular_;
 
-  double dev_rad = 0.001;
+  // what is this value? 2023-08-01 cinaral
+  double dev_rad = 0.005; // default: 0.05 
+  
   node_bounds_.resize(k6D);
   node_bounds_.at(AX) = Bounds(-dev_rad, dev_rad);
   node_bounds_.at(AY) = Bounds(-dev_rad, dev_rad);

@@ -48,9 +48,9 @@ void UserCommandCallback(const towr_ros::TowrCommand& msg_in)
   auto terrain_ = HeightMap::MakeTerrain(terrain_id);
 
   // x-y area patch that should be drawn in rviz
-  double dxy   =  0.06;
+  double dxy   =  0.05;
   double x_min = -1.0;
-  double x_max =  4.0;
+  double x_max =  3.0;
   double y_min = -1.0;
   double y_max =  1.0;
 

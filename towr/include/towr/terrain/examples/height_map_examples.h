@@ -60,9 +60,9 @@ public:
   double GetHeightDerivWrtX(double x, double y) const override;
 
 private:
-  double block_start = 0.2;
-  double length_     = 3.5;
-  double height_     = 0.1; // [m]
+  double block_start = 0.7; // default: 0.7
+  double length_     = 3.5; // default: 3.5
+  double height_     = 0.1; // [m] default: 0.5
 
   double eps_ = 0.03; // approximate as slope
   const double slope_ = height_/eps_;

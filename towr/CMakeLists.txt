@@ -4,7 +4,6 @@ project(towr VERSION 1.3.2)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 find_package(ifopt 2.0.1 REQUIRED)
 
-
 ###########
 ## Build ##
 ###########
@@ -49,6 +48,7 @@ add_library(${PROJECT_NAME} SHARED
   src/biped_gait_generator.cc
   src/quadruped_gait_generator.cc
   # terrain
+  src/custom_terrain.cpp
   src/height_map_examples.cc
   src/height_map.cc
   # helpers
@@ -72,6 +72,21 @@ target_include_directories(${PROJECT_NAME}
     $<INSTALL_INTERFACE:include>
 )
 
+##########################
+## Trajectory generator ##
+##########################
+add_executable(
+  main
+  src/main.cpp			
+)
+target_link_libraries(main
+  PRIVATE
+    ${PROJECT_NAME} 
+    ifopt::ifopt_ipopt
+)
+target_compile_options(
+  main PRIVATE
+)
 
 #############
 ## Testing ##
@@ -80,7 +95,6 @@ enable_testing()
 # example problem solved with IPOPT
 add_executable(${PROJECT_NAME}-example 
   test/hopper_example.cc
-  # test/collect_traj.cc
 )
 target_link_libraries(${PROJECT_NAME}-example  
   PRIVATE

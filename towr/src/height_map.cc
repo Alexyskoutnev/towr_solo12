@@ -28,6 +28,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************/
 
 #include <towr/terrain/height_map.h>
+#include "towr/terrain/custom_terrain.hpp"
 #include <towr/terrain/examples/height_map_examples.h>
 
 #include <cmath>
@@ -38,6 +39,7 @@ HeightMap::Ptr
 HeightMap::MakeTerrain (TerrainID type)
 {
   switch (type) {
+    case CustomID:    return std::make_shared<CustomTerrain>(); break;
     case FlatID:      return std::make_shared<FlatGround>(); break;
     case BlockID:     return std::make_shared<Block>(); break;
     case StairsID:    return std::make_shared<Stairs>(); break;

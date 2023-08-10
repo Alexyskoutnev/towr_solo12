@@ -1,0 +1,59 @@
+{
+	"tasks": [
+		{
+			"label": "Build towr with cmake",
+			"type": "shell",
+			"command": "bash ./scripts/cmake_build/build.sh",
+			"group": "build",
+		},
+		{
+			"label": "Clear cmake build",
+			"type": "shell",
+			"command": "bash ./scripts/cmake_build/clear.sh",
+			"group": "build",
+		},
+		{
+			"label": "Catkin build towr & rviz",
+			"type": "shell",
+			"command": "bash ./scripts/catkin_build/build.sh",
+			"group": "build",
+		},
+		{
+			"label": "Clear catkin build",
+			"type": "shell",
+			"command": "bash ./scripts/catkin_build/clear.sh",
+			"group": "build",
+		},
+		{
+			"label": "Launch rviz",
+			"type": "shell",
+			"command": "bash ./scripts/launch_rviz.sh",
+			"group": "build",
+		},
+		{
+			"label": "Install ifopt",
+			"type": "shell",
+			"dependsOn": [
+				"Configure ifopt"
+			],
+			"command": "sudo bash ./scripts/install_ifopt.sh",
+			//"group": "build",
+		},
+		{
+			"label": "Uninstall ifopt",
+			"type": "shell",
+			"command": "sudo bash ./scripts/uninstall_ifopt.sh",
+			//"group": "build",
+		}
+	],
+	"version": "2.0.0",
+	"type": "shell",
+	"presentation": {
+		"echo": true,
+		"clear": false,
+		"reveal": "always",
+		"focus": true,
+		"panel": "shared",
+		"showReuseMessage": false
+	}
+}

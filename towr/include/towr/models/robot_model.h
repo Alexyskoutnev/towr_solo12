@@ -71,7 +71,7 @@ struct RobotModel {
                Biped,   ///< two-legged
                Hyq,     ///< four-legged robot from IIT
                Anymal,  ///< four-legged robot from Anybotics
-               Solo12,
+               Solo12,  ///< four-legged robot from Open Dynamic Robot Initiative 
                ROBOT_COUNT };
 
 
