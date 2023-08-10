@@ -158,9 +158,9 @@ main(int argc, char *argv[])
 				goal[1] = std::stod(cmd_return[1]);
 				goal[2] = std::stod(cmd_return[2]);
 			} else {
-				goal[0] = 0.0;
+				goal[0] = 0.5;
 				goal[1] = 0.0;
-				goal[2] = 0.0;
+				goal[2] = 0.24;
 			}
 			if (cmdoptionExists(argv, argv + argc, "-s")) {
 				std::vector<std::string> cmd_return =
@@ -171,7 +171,7 @@ main(int argc, char *argv[])
 			} else {
 				start[0] = 0.0;
 				start[1] = 0.0;
-				start[2] = 0.3;
+				start[2] = 0.0;
 			}
 			if (cmdoptionExists(argv, argv + argc, "-s_ang")) {
 				std::vector<std::string> cmd_return =
@@ -195,23 +195,23 @@ main(int argc, char *argv[])
 				start_vel[1] = 0.0;
 				start_vel[2] = 0.0;
 			}
-			// if (cmdoptionExists(argv, argv+argc, "-n"))
-			//   {
-			//     std::string cmd_return = getcmdParser(argv, argv+argc, "-n", 1);
-			//     std::cout << "value fo cmd_return -> " << cmd_return << std::endl;
-			//     std::cout << "next line" << std::endl;
-			//     if (cmd_return == "t"){
-			//       _normalize = true;
-			//     } else {
-			//       _normalize = false;
-			//     }
-			//   }
-			// else
-			//   {
-			//     start_vel[0] = 0.0;
-			//     start_vel[1] = 0.0;
-			//     start_vel[2] = 0.0;
-			//   }
+			if (cmdoptionExists(argv, argv+argc, "-n"))
+			  {
+			    std::string cmd_return = getcmdParser(argv, argv+argc, "-n", 1);
+			    std::cout << "value fo cmd_return -> " << cmd_return << std::endl;
+			    std::cout << "next line" << std::endl;
+			    if (cmd_return == "t"){
+			      _normalize = true;
+			    } else {
+			      _normalize = false;
+			    }
+			  }
+			else
+			  {
+			    start_vel[0] = 0.0;
+			    start_vel[1] = 0.0;
+			    start_vel[2] = 0.0;
+			  }
 			if (cmdoptionExists(argv, argv + argc, "-e1")) {
 				std::vector<std::string> cmd_return =
 				    split(getcmdParser(argv, argv + argc, "-e1", 3), ' ');
@@ -277,9 +277,9 @@ main(int argc, char *argv[])
 		start_ang[0] = 0.0;
 		start_ang[1] = 0.0;
 		start_ang[2] = 0.0;
-		goal[0] = 0.0;
+		goal[0] = 0.5;
 		goal[1] = 0.0;
-		goal[2] = 0.0;
+		goal[2] = 0.24;
 		ee1_pos[0] = EE_default[0][0];
 		ee1_pos[1] = EE_default[0][1];
 		ee1_pos[2] = 0.0;
@@ -308,10 +308,12 @@ main(int argc, char *argv[])
 	int n_ee = 4;
 
 	// trajectory run time
-	double run_time = 5;
+	double run_time = 10;
 
 	// terrain
-	formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfield.txt");
+	// formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfield.txt");
+	// formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfield.txt");
+	formulation.terrain_ = std::make_shared<FlatGround>(0.0);
 
 	int i = 0;
 	std::for_each(formulation.initial_ee_W_.begin(), formulation.initial_ee_W_.end(),
@@ -356,7 +358,8 @@ main(int argc, char *argv[])
 	// auto gait generation
 	auto gait_gen_ =
 	    GaitGenerator::MakeGaitGenerator(n_ee); // 0 - overlap walk, 1 - fly trot, 2 - pace
-	auto gait_type = GaitGenerator::Custom;
+	// auto gait_type = GaitGenerator::Custom;
+	auto gait_type = GaitGenerator::C0;
 	gait_gen_->SetCombo(gait_type);
 
 	for (int ee = 0; ee < n_ee; ++ee) {
@@ -386,7 +389,7 @@ main(int argc, char *argv[])
 	auto solver = std::make_shared<ifopt::IpoptSolver>();
 	solver->SetOption("linear_solver", "mumps");
 	solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
-	solver->SetOption("max_cpu_time", 10.0);
+	solver->SetOption("max_cpu_time", 30.0);
 	solver->SetOption("print_level", 5);
 	solver->SetOption("max_iter", 3000);
 	solver->Solve(nlp);
