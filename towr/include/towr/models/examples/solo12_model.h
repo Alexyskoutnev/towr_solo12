@@ -18,10 +18,6 @@ public:
     const double y_nominal_b = 0.18;
     const double z_nominal_b = -0.24;
 
-    // const double x_nominal_b = 0.20;
-    // const double y_nominal_b = 0.18;
-    // const double z_nominal_b = -0.24;
-
     nominal_stance_.at(LF) <<  x_nominal_b,   y_nominal_b, z_nominal_b;
     nominal_stance_.at(RF) <<  x_nominal_b,  -y_nominal_b, z_nominal_b;
     nominal_stance_.at(LH) << -x_nominal_b,   y_nominal_b, z_nominal_b;

@@ -171,7 +171,7 @@ main(int argc, char *argv[])
 			} else {
 				start[0] = 0.0;
 				start[1] = 0.0;
-				start[2] = 0.0;
+				start[2] = 0.24;
 			}
 			if (cmdoptionExists(argv, argv + argc, "-s_ang")) {
 				std::vector<std::string> cmd_return =
@@ -308,10 +308,9 @@ main(int argc, char *argv[])
 	int n_ee = 4;
 
 	// trajectory run time
-	double run_time = 10;
+	double run_time = 10; //DONT TOUCH THIS BECAUSE MPC HYPERPARAMETERS ARE BASED ON THIS RUN TIME
 
 	// terrain
-	// formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfield.txt");
 	// formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfield.txt");
 	formulation.terrain_ = std::make_shared<FlatGround>(0.0);
 
@@ -389,7 +388,7 @@ main(int argc, char *argv[])
 	auto solver = std::make_shared<ifopt::IpoptSolver>();
 	solver->SetOption("linear_solver", "mumps");
 	solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
-	solver->SetOption("max_cpu_time", 30.0);
+	solver->SetOption("max_cpu_time", 15.0);
 	solver->SetOption("print_level", 5);
 	solver->SetOption("max_iter", 3000);
 	solver->Solve(nlp);
