@@ -312,7 +312,9 @@ main(int argc, char *argv[])
 
 	// terrain
 	// formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfield.txt");
-	formulation.terrain_ = std::make_shared<FlatGround>(0.0);
+	// formulation.terrain_ = std::make_shared<CustomTerrain>("../data/walls.txt");
+	formulation.terrain_ = std::make_shared<CustomTerrain>("../data/staircase.txt");
+	// formulation.terrain_ = std::make_shared<FlatGround>(0.0);
 
 	int i = 0;
 	std::for_each(formulation.initial_ee_W_.begin(), formulation.initial_ee_W_.end(),
@@ -349,7 +351,8 @@ main(int argc, char *argv[])
 	formulation.initial_base_.ang.at(towr::kPos).z() = start_ang[2];
 
 	// define the desired goal state of the quadruped
-	formulation.final_base_.lin.at(towr::kPos) << goal[0], goal[1], goal[2];
+	// formulation.final_base_.lin.at(towr::kPos) << goal[0], goal[1], goal[2];
+	formulation.final_base_.lin.at(towr::kPos) << 1.0, goal[1], goal[2];
 	formulation.final_base_.lin.at(towr::kVel) << 0, 0, 0;
 	formulation.final_base_.ang.at(towr::kPos) << 0, 0, 0;
 	formulation.final_base_.ang.at(towr::kVel) << 0, 0, 0;
@@ -388,7 +391,7 @@ main(int argc, char *argv[])
 	auto solver = std::make_shared<ifopt::IpoptSolver>();
 	solver->SetOption("linear_solver", "mumps");
 	solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
-	solver->SetOption("max_cpu_time", 15.0);
+	solver->SetOption("max_cpu_time", 30.0);
 	solver->SetOption("print_level", 5);
 	solver->SetOption("max_iter", 3000);
 	solver->Solve(nlp);
