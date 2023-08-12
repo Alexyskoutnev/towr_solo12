@@ -2,6 +2,8 @@
 #define CUSTOM_TERRAIN_HPP_CINARAL_230801_1412
 
 #include "towr/terrain/height_map.h"
+#include <iostream>
+#include <filesystem>
 
 namespace towr
 {

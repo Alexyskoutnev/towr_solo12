@@ -25,6 +25,8 @@ CustomTerrain::ReadHeightField(const std::string &file_name)
 
 	std::ifstream file(file_name);
 	if (!file) {
+		std::filesystem::path currentDir = std::filesystem::current_path();
+		std::cerr << "Current Working Directory -> " << currentDir.string() << std::endl;
 		std::cerr << "Could not open file " << file_name << std::endl;
 		return height_field;
 	}
