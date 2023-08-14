@@ -17,7 +17,7 @@ class CustomTerrain : public HeightMap
 {
   public:
 
-	CustomTerrain(const std::string &file_name = "./data/heightfield.txt");
+	CustomTerrain(const std::string &file_name = "./data/heightfields/misc.txt");
 	HeightField ReadHeightField(const std::string &file_name);
 	double GetHeight(double x, double y) const override;
 	double GetHeightDerivWrtX(double x, double y) const override;
