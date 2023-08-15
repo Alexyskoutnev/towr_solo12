@@ -311,9 +311,9 @@ main(int argc, char *argv[])
 	double run_time = 10; //DONT TOUCH THIS BECAUSE MPC HYPERPARAMETERS ARE BASED ON THIS RUN TIME
 
 	// terrain
-	formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfield.txt");
-	// formulation.terrain_ = std::make_shared<CustomTerrain>("../data/walls.txt");
-	// formulation.terrain_ = std::make_shared<CustomTerrain>("../data/staircase.txt");
+	formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfields/heightfield.txt");
+	// formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfields/walls.txt");
+	// formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfields/staircase.txt");
 	// formulation.terrain_ = std::make_shared<FlatGround>(0.0);
 
 	int i = 0;
