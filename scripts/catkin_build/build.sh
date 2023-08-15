@@ -15,6 +15,9 @@ pushdq "$(dirname ${BASH_SOURCE[0]:-$0})"
 CATKIN_PATH=../../../..
 
 # copy data folder to .ros because relative paths are difficult with ros
+source /opt/ros/melodic/setup.bash
+source ~/.bashrc
+mkdir -p ~/.ros/data
 rsync -a $CATKIN_PATH/src/towr_solo12/towr/data/ ~/.ros/data/ --delete
 
 pushdq $CATKIN_PATH
