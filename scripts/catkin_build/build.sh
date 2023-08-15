@@ -21,5 +21,5 @@ mkdir -p ~/.ros/data
 rsync -a $CATKIN_PATH/src/towr_solo12/towr/data/ ~/.ros/data/ --delete
 
 pushdq $CATKIN_PATH
-catkin_make_isolated -DCMAKE_BUILD_TYPE=Release # or `catkin build`
+catkin_make_isolated -DCMAKE_BUILD_TYPE=Release -j4 # or `catkin build`
 echo "$0 returned $?."
