@@ -16,6 +16,6 @@ TOWR_PATH=../../towr
 
 mkdir $TOWR_PATH/build
 pushdq $TOWR_PATH/build
-cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -j4
 make
 echo "$0 returned $?."
