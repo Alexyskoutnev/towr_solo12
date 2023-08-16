@@ -98,7 +98,7 @@ CustomTerrain::GetHeightDerivWrtX(double x, double y) const
 {
 	double z_dx = 0.0;
 
-	///*
+	/*
 	const size_t x_size = height_field_.size();
 	const size_t y_size = height_field_[0].size();
 
@@ -121,7 +121,7 @@ CustomTerrain::GetHeightDerivWrtX(double x, double y) const
 
 	z_dx = 1 / (x_step_length_ * y_step_length_) *
 	    ((-z00 + z10) * (y1 - y) + (-z01 + z11) * (y - y0));
-	//*/
+	*/
 	return z_dx;
 }
 
@@ -130,7 +130,7 @@ CustomTerrain::GetHeightDerivWrtY(double x, double y) const
 {
 	double z_dy = 0.0;
 
-	///*
+	/*
 	const size_t x_size = height_field_.size();
 	const size_t y_size = height_field_[0].size();
 
@@ -153,7 +153,7 @@ CustomTerrain::GetHeightDerivWrtY(double x, double y) const
 
 	z_dy = 1 / (x_step_length_ * y_step_length_) *
 	    (z00 * (x - x1) + z10 * (x0 - x) + z01 * (x1 - x) + z11 * (x - x0));
-	//*/
+	*/
 
 	return z_dy;
 }

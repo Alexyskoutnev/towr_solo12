@@ -311,7 +311,7 @@ main(int argc, char *argv[])
 	double run_time = 10; //DONT TOUCH THIS BECAUSE MPC HYPERPARAMETERS ARE BASED ON THIS RUN TIME
 
 	// terrain
-	formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfields/flat.txt");
+	formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfields/from_pybullet/towr_heightfield.txt");
 	// formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfields/walls.txt");
 	// formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfields/staircase.txt");
 	// formulation.terrain_ = std::make_shared<FlatGround>(0.0);
@@ -351,8 +351,7 @@ main(int argc, char *argv[])
 	formulation.initial_base_.ang.at(towr::kPos).z() = start_ang[2];
 
 	// define the desired goal state of the quadruped
-	// formulation.final_base_.lin.at(towr::kPos) << goal[0], goal[1], goal[2];
-	formulation.final_base_.lin.at(towr::kPos) << 1.0, goal[1], goal[2];
+	 formulation.final_base_.lin.at(towr::kPos) << goal[0], goal[1], goal[2];
 	formulation.final_base_.lin.at(towr::kVel) << 0, 0, 0;
 	formulation.final_base_.ang.at(towr::kPos) << 0, 0, 0;
 	formulation.final_base_.ang.at(towr::kVel) << 0, 0, 0;
