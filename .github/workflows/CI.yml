@@ -22,19 +22,29 @@ jobs:
                         sudo apt-get update
                         apt-get -y install gcc gfortran patch wget pkg-config liblapack-dev libmetis-dev curl python3 python3-pip lsb-core
                         apt-get -y install libeigen3-dev coinor-libipopt-dev libncurses5-dev xterm
-                        
+
                 - name: Set Up Third-party Directory
-                   run: mkdir -p ./thirdparty
-                   working-directory: ${{ github.workspace }}
+                  run: mkdir -p ./thirdparty
+                  working-directory: ${{ github.workspace }}
 
                 - name: Clone and Build Ipopt
-                  run: |
+                  run : |
                         git clone https://github.com/coin-or/Ipopt.git
                         cd thirdparty/Ipopt
                         mkdir -p build
                         cd build
                         ../configure
                         make -j4
+                  working-directory: ${{ github.workspace }}
+                - name : Clone and Build IFOPT
+                  run : |
+                        git clone https://github.com/ethz-adrl/ifopt.git
+                        cd thirdparty/ifopt
+                        mkdir -p build
+                        cd build
+                        cmake ..
+                        make -j4
+                        sudo make install
                   working-directory: ${{ github.workspace }}
 
 
