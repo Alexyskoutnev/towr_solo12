@@ -1,9 +1,11 @@
-name : CI
+name: C/C++, ROS CI
 
 on:
-        push:
-                branches:
-                        - main
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
 jobs:
         build:
                 runs-on: ubuntu-18.04
@@ -46,6 +48,23 @@ jobs:
                         make -j4
                         sudo make install
                   working-directory: ${{ github.workspace }}
+                  
+                - name: Add ROS Repository
+                  run: |
+                        echo "deb http://packages.ros.org/ros/ubuntu bionic main" | sudo tee /etc/apt/sources.list.d/ros-melodic.list
+                        curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+
+                - name: Update apt
+                  run: sudo apt update
+
+                - name: Install ROS
+                  run: |
+                        sudo apt-get -y install ros-melodic-desktop-full
+
+                - name: Set Up ROS Environment
+                  run: |
+                        echo "source /opt/ros/melodic/setup.bash" >> $HOME/.bashrc
+                        source $HOME/.bashrc
 
 
 
