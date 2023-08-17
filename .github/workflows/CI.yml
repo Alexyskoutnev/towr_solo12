@@ -2,9 +2,9 @@ name: C/C++, ROS CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "main" ]
 
 jobs:
         build:
@@ -48,23 +48,59 @@ jobs:
                         make -j4
                         sudo make install
                   working-directory: ${{ github.workspace }}
-                  
+
                 - name: Add ROS Repository
-                  run: |
+                  run : |
                         echo "deb http://packages.ros.org/ros/ubuntu bionic main" | sudo tee /etc/apt/sources.list.d/ros-melodic.list
                         curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
 
                 - name: Update apt
-                  run: sudo apt update
+                  run : sudo apt update
 
                 - name: Install ROS
-                  run: |
+                  run : |
                         sudo apt-get -y install ros-melodic-desktop-full
 
                 - name: Set Up ROS Environment
-                  run: |
+                  run : |
                         echo "source /opt/ros/melodic/setup.bash" >> $HOME/.bashrc
                         source $HOME/.bashrc
+
+                - name : Setting up Towr Dependencies
+                  run  : apt-get install -y ros-melodic-xpp
+                
+                - name : 
+                  uses: actions/checkout@v2
+                  with:
+                        repository: alexyskoutnev/towr_solo12 
+
+                - name: Create Build Directory
+                  run: mkdir build
+
+                - name: Build
+                  run: |
+                        cd build
+                        cmake -S ../ -DCMAKE_BUILD_TYPE=Release
+                        make -j4  # Adjust the build command as needed
+                        make install
+
+                - name : Run Towr_SOLO12 Tests
+                  run: |
+                      bash /scripts/catkin_build/clear.sh
+                      bash /scripts/catkin_build/build.sh
+                      bash /scripts/cmake_build/clear.sh
+                      bash /scripts/cmake_build/build.sh
+                      bash /scripts/launch_rviz.sh #This might not work
+
+                - name: Push Changes (if tests passed)
+                  if: ${{ success() }}
+                  run: |
+                        git config user.name "GitHub Actions"
+                        git config user.email "<>"
+                        git add .
+                        git commit -m "Passed Building Test"
+                        git push
+
 
 
 
