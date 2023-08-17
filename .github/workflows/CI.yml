@@ -1,0 +1,42 @@
+name : CI
+
+on:
+        push:
+                branches:
+                        - main
+jobs:
+        build:
+                runs-on: ubuntu-18.04
+
+                steps:
+                - name : Chcekout to code
+                  uses: actions/checkout@2
+                - name: Install g++
+                  run: sudo apt-get update && sudo apt-get install -y g++
+                - name: Install CMake
+                  run : |
+                        wget -O cmake.sh https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-Linux-x86_64.sh
+                        sudo sh cmake.sh --skip-lincese --prefix=/usr/local
+                - name : Installing Dependencies
+                  run : |
+                        sudo apt-get update
+                        apt-get -y install gcc gfortran patch wget pkg-config liblapack-dev libmetis-dev curl python3 python3-pip lsb-core
+                        apt-get -y install libeigen3-dev coinor-libipopt-dev libncurses5-dev xterm
+                        
+                - name: Set Up Third-party Directory
+                   run: mkdir -p ./thirdparty
+                   working-directory: ${{ github.workspace }}
+
+                - name: Clone and Build Ipopt
+                  run: |
+                        git clone https://github.com/coin-or/Ipopt.git
+                        cd thirdparty/Ipopt
+                        mkdir -p build
+                        cd build
+                        ../configure
+                        make -j4
+                  working-directory: ${{ github.workspace }}
+
+
+
+
