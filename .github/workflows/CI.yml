@@ -90,7 +90,11 @@ jobs:
                       bash /scripts/catkin_build/build.sh
                       bash /scripts/cmake_build/clear.sh
                       bash /scripts/cmake_build/build.sh
-                      bash /scripts/launch_rviz.sh #This might not work
+                      bash /scripts/launch_rviz.sh
+
+                - name : RUN Towr_SOLO12 OPTIMIZATION TEST
+                  run : |
+                        ./towr/build/towr-example
 
                 - name: Push Changes (if tests passed)
                   if: ${{ success() }}
