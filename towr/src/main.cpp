@@ -312,8 +312,6 @@ main(int argc, char *argv[])
 
 	// terrain
 	formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfields/from_pybullet/towr_heightfield.txt");
-	// formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfields/walls.txt");
-	// formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfields/staircase.txt");
 	// formulation.terrain_ = std::make_shared<FlatGround>(0.0);
 
 	int i = 0;
