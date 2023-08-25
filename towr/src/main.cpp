@@ -395,10 +395,13 @@ main(int argc, char *argv[])
 	solver->SetOption("print_level", 5);
 	solver->SetOption("max_iter", 100);
 	solver->Solve(nlp);
+	auto status = solver->GetReturnStatus();
+	std::cout << "status -> " << status << std::endl;
 
 	using namespace std;
 	cout.precision(2);
 	nlp.PrintCurrent(); // view variable-set, constraint violations, indices,...
 	cout << fixed;
 	getTrajectory(solution, save_file, _timestep, t_start);
+	return status;
 }
