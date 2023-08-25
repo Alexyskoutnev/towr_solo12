@@ -17,12 +17,12 @@ std::string save_file = "traj.csv";
 using namespace towr;
 
 void
-normalize(double vec0[], double vec1[])
+normalize(double start_CoM[], double goal_CoM[])
 {
-	vec1[0] = vec1[0] - vec0[0];
-	vec1[1] = vec1[1] - vec0[1];
-	vec0[0] = 0.0;
-	vec0[1] = 0.0;
+	goal_CoM[0] = goal_CoM[0] - start_CoM[0];
+	goal_CoM[1] = goal_CoM[1] - start_CoM[1];
+	// start_CoM[0] = 0.0;
+	// start_CoM[1] = 0.0;
 }
 
 std::vector<std::string>
@@ -308,7 +308,7 @@ main(int argc, char *argv[])
 	int n_ee = 4;
 
 	// trajectory run time
-	double run_time = 10; //DONT TOUCH THIS BECAUSE MPC HYPERPARAMETERS ARE BASED ON THIS RUN TIME
+	double run_time = 5.0; //DONT TOUCH THIS BECAUSE MPC HYPERPARAMETERS ARE BASED ON THIS RUN TIME
 
 	// terrain
 	formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfields/from_pybullet/towr_heightfield.txt");
@@ -333,14 +333,17 @@ main(int argc, char *argv[])
 
 	// Normalize the start and end coords
 	if (_normalize) {
+		std::cout << "Utilizing a normalized coord system!" << std::endl;
 		normalize(start, goal);
 	}
+
+	std::cout << "normalize value -> " << _normalize << std::endl;
 
 	// define the start conditions for quadruped
 	formulation.initial_base_.lin.at(towr::kPos).x() = start[0];
 	formulation.initial_base_.lin.at(towr::kPos).y() = start[1];
-	formulation.initial_base_.lin.at(kPos).z() = -nominal_stance_B.front().z() + z_ground;
-	// formulation.initial_base_.lin.at(towr::kPos).z() = start[2]; // ignoring start z for now
+	// formulation.initial_base_.lin.at(kPos).z() = -nominal_stance_B.front().z() + z_ground;
+	formulation.initial_base_.lin.at(towr::kPos).z() = start[2]; // ignoring start z for now
 	formulation.initial_base_.lin.at(towr::kVel).x() = start_vel[0];
 	formulation.initial_base_.lin.at(towr::kVel).y() = start_vel[1];
 	formulation.initial_base_.lin.at(towr::kVel).z() = start_vel[2];
@@ -388,9 +391,9 @@ main(int argc, char *argv[])
 	auto solver = std::make_shared<ifopt::IpoptSolver>();
 	solver->SetOption("linear_solver", "mumps");
 	solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
-	solver->SetOption("max_cpu_time", 30.0);
+	solver->SetOption("max_cpu_time", 10.0);
 	solver->SetOption("print_level", 5);
-	solver->SetOption("max_iter", 3000);
+	solver->SetOption("max_iter", 100);
 	solver->Solve(nlp);
 
 	using namespace std;

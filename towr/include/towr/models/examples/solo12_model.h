@@ -14,8 +14,8 @@ class Solo12KinematicModel : public KinematicModel {
 public:
   Solo12KinematicModel () : KinematicModel(4)
   {
-    const double x_nominal_b = 0.20;
-    const double y_nominal_b = 0.20;
+    const double x_nominal_b = 0.21;
+    const double y_nominal_b = 0.19;
     const double z_nominal_b = -0.24;
 
     nominal_stance_.at(LF) <<  x_nominal_b,   y_nominal_b, z_nominal_b;
@@ -32,7 +32,7 @@ public:
  */
 class Solo12DynamicModel : public SingleRigidBodyDynamics {
 public:
-  Solo12DynamicModel() : SingleRigidBodyDynamics(1.25123725,
+  Solo12DynamicModel() : SingleRigidBodyDynamics(1.0,
                        0.00266220, -0.00003684, -0.00001716, 0.01388510, -0.00000009, 0.01605370,
                        4) {}
 };
