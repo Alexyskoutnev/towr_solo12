@@ -21,8 +21,8 @@ normalize(double start_CoM[], double goal_CoM[])
 {
 	goal_CoM[0] = goal_CoM[0] - start_CoM[0];
 	goal_CoM[1] = goal_CoM[1] - start_CoM[1];
-	// start_CoM[0] = 0.0;
-	// start_CoM[1] = 0.0;
+	start_CoM[0] = 0.0;
+	start_CoM[1] = 0.0;
 }
 
 std::vector<std::string>
@@ -138,6 +138,7 @@ main(int argc, char *argv[])
 	double ee2_pos[3];
 	double ee3_pos[3];
 	double ee4_pos[3];
+	double solver_runtime;
 	double t_start;
 	std::vector<Eigen::Matrix<double, 3, 1>> EE_default;
 
@@ -161,6 +162,12 @@ main(int argc, char *argv[])
 				goal[0] = 0.5;
 				goal[1] = 0.0;
 				goal[2] = 0.24;
+			}
+			if (cmdoptionExists(argv, argv + argc, "-r")) {
+				std::string cmd_return = getcmdParser(argv, argv + argc, "-r", 1);
+				solver_runtime = std::stod(cmd_return);
+			} else {
+				solver_runtime = 30.0;
 			}
 			if (cmdoptionExists(argv, argv + argc, "-s")) {
 				std::vector<std::string> cmd_return =
@@ -293,6 +300,7 @@ main(int argc, char *argv[])
 		ee4_pos[1] = EE_default[3][1];
 		ee4_pos[2] = 0.0;
 		_normalize = false;
+		solver_runtime = 30.0;
 	}
 
 	// end-effector vector
@@ -342,8 +350,8 @@ main(int argc, char *argv[])
 	// define the start conditions for quadruped
 	formulation.initial_base_.lin.at(towr::kPos).x() = start[0];
 	formulation.initial_base_.lin.at(towr::kPos).y() = start[1];
-	// formulation.initial_base_.lin.at(kPos).z() = -nominal_stance_B.front().z() + z_ground;
-	formulation.initial_base_.lin.at(towr::kPos).z() = start[2]; // ignoring start z for now
+	formulation.initial_base_.lin.at(kPos).z() = -nominal_stance_B.front().z() + z_ground;
+	// formulation.initial_base_.lin.at(towr::kPos).z() = start[2]; // ignoring start z for now
 	formulation.initial_base_.lin.at(towr::kVel).x() = start_vel[0];
 	formulation.initial_base_.lin.at(towr::kVel).y() = start_vel[1];
 	formulation.initial_base_.lin.at(towr::kVel).z() = start_vel[2];
@@ -391,9 +399,10 @@ main(int argc, char *argv[])
 	auto solver = std::make_shared<ifopt::IpoptSolver>();
 	solver->SetOption("linear_solver", "mumps");
 	solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
-	solver->SetOption("max_cpu_time", 10.0);
+	std::cout << "SOLVER RUN TIME : " << solver_runtime << std::endl;
+	solver->SetOption("max_cpu_time", solver_runtime);
 	solver->SetOption("print_level", 5);
-	solver->SetOption("max_iter", 100);
+	solver->SetOption("max_iter", 500);
 	solver->Solve(nlp);
 	auto status = solver->GetReturnStatus();
 	std::cout << "status -> " << status << std::endl;
