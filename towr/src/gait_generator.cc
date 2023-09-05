@@ -110,6 +110,12 @@ GaitGenerator::IsInContactAtStart (EE ee) const
   return contacts_.front().at(ee);
 }
 
+bool
+GaitGenerator::IsInContactAtEnd (EE ee) const
+{
+  return contacts_.back().at(ee);
+}
+
 void
 GaitGenerator::SetGaits (const std::vector<Gaits>& gaits)
 {

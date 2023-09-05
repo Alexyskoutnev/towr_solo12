@@ -23,7 +23,7 @@ public:
     nominal_stance_.at(LH) << -x_nominal_b,   y_nominal_b, z_nominal_b;
     nominal_stance_.at(RH) << -x_nominal_b,  -y_nominal_b, z_nominal_b;
 
-    max_dev_from_nominal_ << 0.10, 0.07, 0.075;
+    max_dev_from_nominal_ << 0.10, 0.08, 0.12;
   }
 };
 

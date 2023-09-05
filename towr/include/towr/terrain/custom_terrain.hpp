@@ -17,7 +17,7 @@ class CustomTerrain : public HeightMap
 {
   public:
 
-	CustomTerrain(const std::string &file_name = "./data/heightfields/from_pybullet/towr_heightfield.txt");
+	CustomTerrain(const std::string &file_name = "./data/heightfields/from_pybullet/towr_heightfield.txt", double mesh_scale = 0.01);
 	HeightField ReadHeightField(const std::string &file_name);
 	double GetHeight(double x, double y) const override;
 	double GetHeightDerivWrtX(double x, double y) const override;
@@ -25,8 +25,10 @@ class CustomTerrain : public HeightMap
 
   private:
 	HeightField height_field_;
-	const double x_step_length_ = .1;  // [m]
-	const double y_step_length_ = .1;  // [m]
+	// const double x_step_length_ = .1;  // [m]
+	double x_step_length_;  // [m]
+	// const double y_step_length_ = .1;  // [m]
+	double y_step_length_;  // [m]
 	const double z_scaling_ = 1.0;       // [m]
 	const double mesh_x_offset_ = -1.0; // [m]
 	const double mesh_y_offset_ = -1.0; // [m]

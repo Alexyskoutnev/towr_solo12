@@ -85,6 +85,12 @@ public:
   bool IsInContactAtStart(EE ee) const;
 
   /**
+   * @returns true if the foot is initially in contact with the environment.
+   * @param ee  The endeffector/foot/hand.
+   */
+  bool IsInContactAtEnd(EE ee) const;
+
+  /**
    * @brief Sets a specific sequence of gaits.
    *
    * The derived class decides what each combo maps to. This function then fills

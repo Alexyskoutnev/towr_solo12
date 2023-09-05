@@ -83,10 +83,10 @@ cmdoptionExists(char **begin, char **end, const std::string &option)
 void
 entry(std::ofstream &file, double joints[])
 {
-	for (int i = 0; i < 18; i++) {
+	for (int i = 0; i < 36; i++) {
 		file << joints[i] << ",";
 	}
-	file << joints[18] << "\n";
+	file << joints[36] << "\n";
 }
 
 void
@@ -97,15 +97,16 @@ getTrajectory(SplineHolder &solution, std::string save_file, double timestep, do
 	*/
 	double t;
 	double T = solution.base_linear_->GetTotalTime();
-	double csv[19];
+	double csv[37]; // 19 25 
 	std::ofstream file;
 	file.open(save_file);
-	Eigen::VectorXd base_lin, base_ang, base_ang_vel, base_ang_acc, ee_contact, ee_motion,
-	    ee_forces;
+	Eigen::VectorXd base_lin, base_ang, base_lin_vel, base_ang_vel, ee_contact, ee_motion, ee_force;
 	while (t <= T + 1e-4) {
 		int n_ee = solution.ee_motion_.size();
 		base_lin = solution.base_linear_->GetPoint(t).p();
 		base_ang = solution.base_angular_->GetPoint(t).p();
+		base_lin_vel = solution.base_linear_->GetPoint(t).v();
+		base_ang_vel = solution.base_angular_->GetPoint(t).v();
 		csv[0] = t + t_start;
 		for (int i = 0; i < 3; i++) {
 			csv[i + 1] = base_lin[i];
@@ -113,9 +114,15 @@ getTrajectory(SplineHolder &solution, std::string save_file, double timestep, do
 		}
 		for (int ee_towr = 0; ee_towr < n_ee; ++ee_towr) {
 			ee_motion = solution.ee_motion_.at(ee_towr)->GetPoint(t).p();
+			ee_force = solution.ee_force_.at(ee_towr)->GetPoint(t).p();
 			for (int i = 0; i < 3; i++) {
 				csv[(ee_towr * 3) + (i + 7)] = ee_motion[i];
+				csv[(ee_towr * 3) + (i + 25)] = ee_force[i];
 			}
+		}
+		for (int i = 0; i < 3; i++){
+			csv[i + 19] = base_lin_vel[i];
+			csv[i + 22] = base_ang_vel[i];
 		}
 		entry(file, csv);
 		t += timestep;
@@ -131,7 +138,7 @@ main(int argc, char *argv[])
 	double start[3];
 	double start_vel[3];
 	double start_ang[3];
-	double start_orn_vel[3];
+	double start_vel_ang[3];
 	double goal_vel[3];
 	bool _normalize = false;
 	double ee1_pos[3];
@@ -140,6 +147,7 @@ main(int argc, char *argv[])
 	double ee4_pos[3];
 	double solver_runtime;
 	double t_start;
+	double mesh_scale;
 	std::vector<Eigen::Matrix<double, 3, 1>> EE_default;
 
 	// Kinematic limits and dynamic parameters of the Quadruped
@@ -167,7 +175,7 @@ main(int argc, char *argv[])
 				std::string cmd_return = getcmdParser(argv, argv + argc, "-r", 1);
 				solver_runtime = std::stod(cmd_return);
 			} else {
-				solver_runtime = 30.0;
+				solver_runtime = 15.0;
 			}
 			if (cmdoptionExists(argv, argv + argc, "-s")) {
 				std::vector<std::string> cmd_return =
@@ -190,6 +198,17 @@ main(int argc, char *argv[])
 				start_ang[0] = 0.0;
 				start_ang[1] = 0.0;
 				start_ang[2] = 0.0;
+			}
+			if (cmdoptionExists(argv, argv + argc, "-s_ang_vel")) {
+				std::vector<std::string> cmd_return =
+				    split(getcmdParser(argv, argv + argc, "-s_ang_vel", 3), ' ');
+				start_vel_ang[0] = std::stod(cmd_return[0]);
+				start_vel_ang[1] = std::stod(cmd_return[1]);
+				start_vel_ang[2] = std::stod(cmd_return[2]);
+			} else {
+				start_vel_ang[0] = 0.0;
+				start_vel_ang[1] = 0.0;
+				start_vel_ang[2] = 0.0;
 			}
 			if (cmdoptionExists(argv, argv + argc, "-s_vel")) {
 				std::vector<std::string> cmd_return =
@@ -269,6 +288,12 @@ main(int argc, char *argv[])
 			} else {
 				t_start = 0.0;
 			}
+			if (cmdoptionExists(argv, argv + argc, "-mesh_scale")) {
+				std::string cmd_return = getcmdParser(argv, argv + argc, "-mesh_scale", 1);
+				mesh_scale = std::stod(cmd_return);
+			} else {
+				mesh_scale = 0.01;
+			}
 		} catch (const std::invalid_argument &e) {
 			std::cerr << "Argument input error" << std::endl;
 			std::cerr << "Error: " << e.what() << std::endl;
@@ -277,13 +302,16 @@ main(int argc, char *argv[])
 		t_start = 0.0;
 		start[0] = 0.0;
 		start[1] = 0.0;
-		start[2] = 0.0;
+		start[2] = 0.24;
 		start_vel[0] = 0.0;
 		start_vel[1] = 0.0;
 		start_vel[2] = 0.0;
 		start_ang[0] = 0.0;
 		start_ang[1] = 0.0;
 		start_ang[2] = 0.0;
+		start_vel_ang[0] = 0.0;
+		start_vel_ang[1] = 0.0;
+		start_vel_ang[2] = 0.0;
 		goal[0] = 0.5;
 		goal[1] = 0.0;
 		goal[2] = 0.24;
@@ -299,8 +327,9 @@ main(int argc, char *argv[])
 		ee4_pos[0] = EE_default[3][0];
 		ee4_pos[1] = EE_default[3][1];
 		ee4_pos[2] = 0.0;
+		mesh_scale = 0.01;
 		_normalize = false;
-		solver_runtime = 30.0;
+		solver_runtime = 15.0;
 	}
 
 	// end-effector vector
@@ -319,7 +348,7 @@ main(int argc, char *argv[])
 	double run_time = 5.0; //DONT TOUCH THIS BECAUSE MPC HYPERPARAMETERS ARE BASED ON THIS RUN TIME
 
 	// terrain
-	formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfields/from_pybullet/towr_heightfield.txt");
+	formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfields/from_pybullet/towr_heightfield.txt", mesh_scale);
 	// formulation.terrain_ = std::make_shared<FlatGround>(0.0);
 
 	int i = 0;
@@ -338,6 +367,19 @@ main(int argc, char *argv[])
 		std::cout << "ee start pos y -> " << ee.y() << std::endl;
 		std::cout << "ee start pos z -> " << ee.z() << std::endl;
 	}
+	std::cout << "start pos x -> " << start[0] << std::endl;
+	std::cout << "start pos y -> " << start[1] << std::endl;
+	std::cout << "start pos z -> " << start[2] << std::endl;
+
+	std::cout << "goal pos x -> " << goal[0] << std::endl;
+	std::cout << "goal pos y -> " << goal[1] << std::endl;
+	std::cout << "goal pos z -> " << goal[2] << std::endl;
+
+	for (auto ee : formulation.initial_ee_W_) {
+		std::cout << "ee start pos x -> " << ee.x() << std::endl;
+		std::cout << "ee start pos y -> " << ee.y() << std::endl;
+		std::cout << "ee start pos z -> " << ee.z() << std::endl;
+	}
 
 	// Normalize the start and end coords
 	if (_normalize) {
@@ -345,19 +387,20 @@ main(int argc, char *argv[])
 		normalize(start, goal);
 	}
 
-	std::cout << "normalize value -> " << _normalize << std::endl;
-
 	// define the start conditions for quadruped
 	formulation.initial_base_.lin.at(towr::kPos).x() = start[0];
 	formulation.initial_base_.lin.at(towr::kPos).y() = start[1];
-	formulation.initial_base_.lin.at(kPos).z() = -nominal_stance_B.front().z() + z_ground;
-	// formulation.initial_base_.lin.at(towr::kPos).z() = start[2]; // ignoring start z for now
+	// formulation.initial_base_.lin.at(kPos).z() = -nominal_stance_B.front().z() + z_ground;
+	formulation.initial_base_.lin.at(towr::kPos).z() = start[2]; // ignoring start z for now
 	formulation.initial_base_.lin.at(towr::kVel).x() = start_vel[0];
 	formulation.initial_base_.lin.at(towr::kVel).y() = start_vel[1];
 	formulation.initial_base_.lin.at(towr::kVel).z() = start_vel[2];
 	formulation.initial_base_.ang.at(towr::kPos).x() = start_ang[0];
 	formulation.initial_base_.ang.at(towr::kPos).y() = start_ang[1];
 	formulation.initial_base_.ang.at(towr::kPos).z() = start_ang[2];
+	formulation.initial_base_.ang.at(towr::kVel).x() = start_vel_ang[0];
+	formulation.initial_base_.ang.at(towr::kVel).y() = start_vel_ang[1];
+	formulation.initial_base_.ang.at(towr::kVel).z() = start_vel_ang[2];
 
 	// define the desired goal state of the quadruped
 	 formulation.final_base_.lin.at(towr::kPos) << goal[0], goal[1], goal[2];
@@ -373,10 +416,11 @@ main(int argc, char *argv[])
 	gait_gen_->SetCombo(gait_type);
 
 	for (int ee = 0; ee < n_ee; ++ee) {
-		 formulation.params_.ee_phase_durations_.push_back(gait_gen_->GetPhaseDurations(run_time, ee));
-		formulation.params_.ee_in_contact_at_start_.push_back(
-		    gait_gen_->IsInContactAtStart(ee));
+		formulation.params_.ee_phase_durations_.push_back(gait_gen_->GetPhaseDurations(run_time, ee));
+		formulation.params_.ee_in_contact_at_start_.push_back(gait_gen_->IsInContactAtStart(ee));
 	}
+
+	//formulation.params_.ee_in_contact_at_start_.push_back(gait_gen_->IsInContactAtStart(ee));
 	//formulation.params_.ee_phase_durations_.push_back({.25, .5, .25});
 	//formulation.params_.ee_phase_durations_.push_back({1.0});
 	//formulation.params_.ee_phase_durations_.push_back({1.0});

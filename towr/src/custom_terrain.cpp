@@ -9,7 +9,7 @@
 namespace towr
 {
 
-CustomTerrain::CustomTerrain(const std::string &file_name)
+CustomTerrain::CustomTerrain(const std::string &file_name, double mesh_scale) : x_step_length_(mesh_scale), y_step_length_(mesh_scale)
 {
 	height_field_ = ReadHeightField(file_name);
 }
