@@ -288,8 +288,8 @@ main(int argc, char *argv[])
 			} else {
 				t_start = 0.0;
 			}
-			if (cmdoptionExists(argv, argv + argc, "-mesh_scale")) {
-				std::string cmd_return = getcmdParser(argv, argv + argc, "-mesh_scale", 1);
+			if (cmdoptionExists(argv, argv + argc, "-resolution")) {
+				std::string cmd_return = getcmdParser(argv, argv + argc, "-resolution", 1);
 				mesh_scale = std::stod(cmd_return);
 			} else {
 				mesh_scale = 0.01;
@@ -412,7 +412,8 @@ main(int argc, char *argv[])
 	auto gait_gen_ =
 	    GaitGenerator::MakeGaitGenerator(n_ee); // 0 - overlap walk, 1 - fly trot, 2 - pace
 	// auto gait_type = GaitGenerator::Custom;
-	auto gait_type = GaitGenerator::C0;
+	auto gait_type = GaitGenerator::Custom;
+	// auto gait_type = GaitGenerator::C2;
 	gait_gen_->SetCombo(gait_type);
 
 	for (int ee = 0; ee < n_ee; ++ee) {
@@ -420,7 +421,7 @@ main(int argc, char *argv[])
 		formulation.params_.ee_in_contact_at_start_.push_back(gait_gen_->IsInContactAtStart(ee));
 	}
 
-	//formulation.params_.ee_in_contact_at_start_.push_back(gait_gen_->IsInContactAtStart(ee));
+	// formulation.params_.ee_in_contact_at_start_.push_back(gait_gen_->IsInContactAtStart(ee));
 	//formulation.params_.ee_phase_durations_.push_back({.25, .5, .25});
 	//formulation.params_.ee_phase_durations_.push_back({1.0});
 	//formulation.params_.ee_phase_durations_.push_back({1.0});
