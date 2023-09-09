@@ -148,6 +148,8 @@ main(int argc, char *argv[])
 	double solver_runtime;
 	double t_start;
 	double mesh_scale;
+	double duration;
+	bool use_default_gait;
 	std::vector<Eigen::Matrix<double, 3, 1>> EE_default;
 
 	// Kinematic limits and dynamic parameters of the Quadruped
@@ -292,8 +294,17 @@ main(int argc, char *argv[])
 				std::string cmd_return = getcmdParser(argv, argv + argc, "-resolution", 1);
 				mesh_scale = std::stod(cmd_return);
 			} else {
-				mesh_scale = 0.01;
+				mesh_scale = 0.1;
 			}
+			if (cmdoptionExists(argv, argv + argc, "-duration")) {
+				std::string cmd_return = getcmdParser(argv, argv + argc, "-duration", 1);
+				duration = std::stod(cmd_return);
+				use_default_gait = true;
+			} else {
+				duration = 5.0;
+				use_default_gait = false;
+			}
+
 		} catch (const std::invalid_argument &e) {
 			std::cerr << "Argument input error" << std::endl;
 			std::cerr << "Error: " << e.what() << std::endl;
@@ -327,9 +338,11 @@ main(int argc, char *argv[])
 		ee4_pos[0] = EE_default[3][0];
 		ee4_pos[1] = EE_default[3][1];
 		ee4_pos[2] = 0.0;
-		mesh_scale = 0.01;
+		mesh_scale = 0.1;
+		duration = 5.0;
 		_normalize = false;
 		solver_runtime = 15.0;
+		use_default_gait = false;
 	}
 
 	// end-effector vector
@@ -345,7 +358,7 @@ main(int argc, char *argv[])
 	int n_ee = 4;
 
 	// trajectory run time
-	double run_time = 5.0; //DONT TOUCH THIS BECAUSE MPC HYPERPARAMETERS ARE BASED ON THIS RUN TIME
+	double run_time = duration; //DONT TOUCH THIS BECAUSE MPC HYPERPARAMETERS ARE BASED ON THIS RUN TIME
 
 	// terrain
 	formulation.terrain_ = std::make_shared<CustomTerrain>("../data/heightfields/from_pybullet/towr_heightfield.txt", mesh_scale);
@@ -390,7 +403,6 @@ main(int argc, char *argv[])
 	// define the start conditions for quadruped
 	formulation.initial_base_.lin.at(towr::kPos).x() = start[0];
 	formulation.initial_base_.lin.at(towr::kPos).y() = start[1];
-	// formulation.initial_base_.lin.at(kPos).z() = -nominal_stance_B.front().z() + z_ground;
 	formulation.initial_base_.lin.at(towr::kPos).z() = start[2]; // ignoring start z for now
 	formulation.initial_base_.lin.at(towr::kVel).x() = start_vel[0];
 	formulation.initial_base_.lin.at(towr::kVel).y() = start_vel[1];
@@ -403,17 +415,16 @@ main(int argc, char *argv[])
 	formulation.initial_base_.ang.at(towr::kVel).z() = start_vel_ang[2];
 
 	// define the desired goal state of the quadruped
-	 formulation.final_base_.lin.at(towr::kPos) << goal[0], goal[1], goal[2];
+	formulation.final_base_.lin.at(towr::kPos) << goal[0], goal[1], goal[2];
 	formulation.final_base_.lin.at(towr::kVel) << 0, 0, 0;
 	formulation.final_base_.ang.at(towr::kPos) << 0, 0, 0;
 	formulation.final_base_.ang.at(towr::kVel) << 0, 0, 0;
 
 	// auto gait generation
-	auto gait_gen_ =
-	    GaitGenerator::MakeGaitGenerator(n_ee); // 0 - overlap walk, 1 - fly trot, 2 - pace
-	// auto gait_type = GaitGenerator::Custom;
-	auto gait_type = GaitGenerator::Custom;
-	// auto gait_type = GaitGenerator::C2;
+	auto gait_gen_ = GaitGenerator::MakeGaitGenerator(n_ee); // 0 - overlap walk, 1 - fly trot, 2 - pace
+	auto gait_type = GaitGenerator::C0;
+	if (!use_default_gait)
+		gait_type = GaitGenerator::Custom;
 	gait_gen_->SetCombo(gait_type);
 
 	for (int ee = 0; ee < n_ee; ++ee) {
@@ -447,7 +458,7 @@ main(int argc, char *argv[])
 	std::cout << "SOLVER RUN TIME : " << solver_runtime << std::endl;
 	solver->SetOption("max_cpu_time", solver_runtime);
 	solver->SetOption("print_level", 5);
-	solver->SetOption("max_iter", 500);
+	solver->SetOption("max_iter", 1000);
 	solver->Solve(nlp);
 	auto status = solver->GetReturnStatus();
 	std::cout << "status -> " << status << std::endl;
