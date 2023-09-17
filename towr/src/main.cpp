@@ -458,7 +458,7 @@ main(int argc, char *argv[])
 	std::cout << "SOLVER RUN TIME : " << solver_runtime << std::endl;
 	solver->SetOption("max_cpu_time", solver_runtime);
 	solver->SetOption("print_level", 5);
-	solver->SetOption("max_iter", 1000);
+	solver->SetOption("max_iter", 200);
 	solver->Solve(nlp);
 	auto status = solver->GetReturnStatus();
 	std::cout << "status -> " << status << std::endl;
