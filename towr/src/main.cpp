@@ -374,26 +374,6 @@ main(int argc, char *argv[])
 		      } // feet at 0 height
 	);
 
-	// Starting the EE position a height zero
-	for (auto ee : formulation.initial_ee_W_) {
-		std::cout << "ee start pos x -> " << ee.x() << std::endl;
-		std::cout << "ee start pos y -> " << ee.y() << std::endl;
-		std::cout << "ee start pos z -> " << ee.z() << std::endl;
-	}
-	std::cout << "start pos x -> " << start[0] << std::endl;
-	std::cout << "start pos y -> " << start[1] << std::endl;
-	std::cout << "start pos z -> " << start[2] << std::endl;
-
-	std::cout << "goal pos x -> " << goal[0] << std::endl;
-	std::cout << "goal pos y -> " << goal[1] << std::endl;
-	std::cout << "goal pos z -> " << goal[2] << std::endl;
-
-	for (auto ee : formulation.initial_ee_W_) {
-		std::cout << "ee start pos x -> " << ee.x() << std::endl;
-		std::cout << "ee start pos y -> " << ee.y() << std::endl;
-		std::cout << "ee start pos z -> " << ee.z() << std::endl;
-	}
-
 	// Normalize the start and end coords
 	if (_normalize) {
 		std::cout << "Utilizing a normalized coord system!" << std::endl;
@@ -432,15 +412,6 @@ main(int argc, char *argv[])
 		formulation.params_.ee_in_contact_at_start_.push_back(gait_gen_->IsInContactAtStart(ee));
 	}
 
-	// formulation.params_.ee_in_contact_at_start_.push_back(gait_gen_->IsInContactAtStart(ee));
-	//formulation.params_.ee_phase_durations_.push_back({.25, .5, .25});
-	//formulation.params_.ee_phase_durations_.push_back({1.0});
-	//formulation.params_.ee_phase_durations_.push_back({1.0});
-	//formulation.params_.ee_phase_durations_.push_back({1.0});
-
-	// formulation.params_.constraints_.push_back(Parameters::BaseRom); //restricts the
-	// basemotion (adds more decision varaibles and helps optumization converge) Initialize the
-	// nonlinear-programming problem with the variables, constraints and costs.
 	ifopt::Problem nlp;
 	SplineHolder solution;
 	for (auto c : formulation.GetVariableSets(solution))
@@ -451,11 +422,9 @@ main(int argc, char *argv[])
 		nlp.AddCostSet(c);
 
 	// Choose ifopt solver (IPOPT or SNOPT), set some parameters and solve.
-	// solver->SetOption("derivative_test", "first-order");
 	auto solver = std::make_shared<ifopt::IpoptSolver>();
 	solver->SetOption("linear_solver", "mumps");
-	solver->SetOption("jacobian_approximation", "exact"); // "finite difference-values"
-	std::cout << "SOLVER RUN TIME : " << solver_runtime << std::endl;
+	solver->SetOption("jacobian_approximation", "exact");
 	solver->SetOption("max_cpu_time", solver_runtime);
 	solver->SetOption("print_level", 5);
 	solver->SetOption("max_iter", 200);
